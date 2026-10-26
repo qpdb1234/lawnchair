@@ -6,11 +6,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.lawnchair.LawnchairApp
+import app.lawnchair.preferences.ResetPreferences
+import app.lawnchair.preferences.SettingsCategory
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.observeAsState
 import app.lawnchair.preferences.preferenceManager
@@ -18,6 +21,7 @@ import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.ui.preferences.components.QuickActionsPreferences
 import app.lawnchair.ui.preferences.components.RecentsQuickAction
 import app.lawnchair.ui.preferences.components.controls.SliderPreference
+import app.lawnchair.ui.preferences.components.controls.ClickablePreference
 import app.lawnchair.ui.preferences.components.controls.SwitchPreference
 import app.lawnchair.ui.preferences.components.controls.WarningPreference
 import app.lawnchair.ui.preferences.components.layout.ExpandAndShrink
@@ -27,6 +31,7 @@ import app.lawnchair.ui.util.preview.PreviewLawnchair
 import app.lawnchair.util.isOnePlusStock
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
+import kotlinx.coroutines.launch
 
 @Composable
 fun QuickstepPreferences(
@@ -35,6 +40,7 @@ fun QuickstepPreferences(
     val prefs = preferenceManager()
     val prefs2 = preferenceManager2()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val lensAvailable = remember {
         context.packageManager.getLaunchIntentForPackage("com.google.ar.lens") != null
     }
@@ -123,6 +129,15 @@ fun QuickstepPreferences(
                     adapter = prefs2.enableTaskbarOnPhone.getAdapter(),
                     label = stringResource(id = R.string.enable_taskbar_experimental),
                 )
+            }
+        }
+
+        PreferenceGroup {
+            ClickablePreference(
+                label = stringResource(id = R.string.reset_category_label),
+                confirmationText = stringResource(id = R.string.reset_category_confirmation),
+            ) {
+                scope.launch { ResetPreferences.resetCategory(context, SettingsCategory.Quickstep) }
             }
         }
     }

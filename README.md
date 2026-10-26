@@ -1,117 +1,118 @@
-# Lawnchair 15
+# Lawnchair 15 — AI Control Fork
 
-[![Build debug APK](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/ci.yml/badge.svg)](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/ci.yml)
-[![Build release APK](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/release_update.yml/badge.svg)](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/release_update.yml)
-[![Crowdin](https://badges.crowdin.net/e/188ba69d884418987f0b7f1dd55e3a4e/localized.svg)](https://lawnchair.crowdin.com/lawnchair)
-[![OpenCollective](https://img.shields.io/opencollective/all/lawnchair?label=financial%20contributors&logo=open-collective)](https://opencollective.com/lawnchair)
-[![Telegram](https://img.shields.io/endpoint?url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Flccommunity)](https://t.me/lccommunity)
-[![Discord](https://img.shields.io/discord/803299970169700402?label=server&logo=discord)](https://discord.gg/3x8qNWxgGZ)
-[![GitHub Downloads](https://img.shields.io/github/downloads/LawnchairLauncher/lawnchair/total.svg?label=GitHub%20Downloads&logo=github)](https://github.com/LawnchairLauncher/lawnchair/releases)
-[![Play Store Installs](https://img.shields.io/endpoint?color=green&logo=googleplay&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dapp.lawnchair.play%26l%3DPlay%2520Store%2520Installs%26m%3D%24shortinstalls)](https://play.google.com/store/apps/details?id=app.lawnchair.play)
+> 📖 **AI control channels manual / AI 通道使用手册** — full per-channel instructions and call
+> examples: **[English →](docs/AI_CONTROL.md)** • **[中文 →](docs/AI_CONTROL.zh-CN.md)**
+>
+> 🤝 **How to wire an AI up / 如何接入 AI** — system prompt, MCP client configs (Claude Desktop,
+> Python, TypeScript), REST, a ready-made Skill and scripts: **[English →](docs/AI_INTEGRATION.md)**
+> • **[中文 →](docs/AI_INTEGRATION.zh-CN.md)**
 
-<picture>
-    <!-- Avoid image being clickable with slight workaround -->
-    <!-- ❤️ Credit to Raine for the original mockup on the Lawnchair Discord -->
-    <!-- ❤️ Credit to Lawrence Kayku for the current mockup on Unsplash 
-            https://unsplash.com/photos/photography-of-green-leaves-ZVKr8wADhpc 
-    -->
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/device-frame.png" width="250px">
-    <img alt="Google Pixel running Lawnchair Launcher with green wallpaper" src="docs/assets/device-frame.png" width="250px">
-</picture>
+A personal fork of [Lawnchair 15](https://github.com/LawnchairLauncher/lawnchair) (beta 3) that turns the
+home screen into something an **AI agent or a script can drive**, and layers a set of practical
+launcher tweaks on top. It stays a normal, installable Android home app — the extra powers are all
+opt-in switches.
 
-Lawnchair is a free, open-source home app for Android. Taking Launcher3—Android’s default home app—as a starting point, it ports Pixel Launcher features and introduces rich customization options.
+## What this fork adds
 
-This branch houses the codebase of Lawnchair 15, which is currently in beta and is based on Launcher3 from Android 15. For Lawnchair 9 to 14, see the branches with the `9-` to `14-` prefixes, respectively.
+### 🤖 AI Control Interface
 
-## Features
+Nine independent, individually-toggleable entry points let an external agent or `adb` read and
+reshape the workspace:
 
--   **Material You Theming:** Adapts to your wallpaper and system theme.
--   **At a Glance Widget:** Displays information *at a glance* with support for [Smartspacer](https://github.com/KieronQuinn/Smartspacer).
--   **QuickSwitch Support:** Integrates with Android Recents on Android 10 and newer. (requires root)
--   **Global Search:** Allows quick access to apps, contacts, and web results from the home screen.
--   **Customization Options:** Provides options to tweak icons, fonts, and colors to your liking.
--   And more!
+| Channel | Entry point | Enable switch |
+|---------|-------------|---------------|
+| Broadcast | `AdbControlReceiver` | `pref_enable_adb_control` |
+| Activity | `AdbControlActivity` | `pref_enable_adb_activity` |
+| Service | `AdbControlService` | `pref_enable_adb_service` |
+| ContentProvider | `AdbControlProvider` | `pref_enable_adb_provider` |
+| Deep Link | `launcher://control?cmd=…` | `pref_enable_adb_link` |
+| Batch | `bulkInsert` on the provider | `pref_enable_adb_batch` |
+| HTTP REST | `localhost:9091` (loopback only) | `pref_enable_adb_http` |
+| MCP | JSON-RPC over `POST /mcp` on the same loopback server | `pref_enable_adb_mcp` |
+| Shortcut | dynamic launcher shortcuts | `pref_enable_adb_shortcut` |
 
-## Download
+Commands: `list_icons`, `move_icon`, `add_icon`, `remove_icon`, `reload`. The HTTP server
+exposes `GET /help`, `/list`, `/state`, `/cmd` and `POST /mcp`. Every channel is **off by default**
+and gated behind its own switch under **Settings → AI control**.
 
-<p align="left">
-  <a href="https://play.google.com/store/apps/details?id=app.lawnchair.play">
-    <picture>
-      <!-- Avoid image being clickable with slight workaround -->
-      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/badge-google-play.png" height="60">
-      <img alt="Get it on Google Play" src="docs/assets/badge-google-play.png" height="60">
-    </picture>
-  </a>
-  <a href="https://apt.izzysoft.de/fdroid/index/apk/app.lawnchair">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/badge-izzyondroid.png" height="60">
-      <img alt="Get it on IzzyOnDroid" src="docs/assets/badge-izzyondroid.png" height="60">
-    </picture>
-  </a>
-  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/LawnchairLauncher/lawnchair/">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/badge-obtainium.png" height="60">
-      <img alt="Get it on Obtainium" src="docs/assets/badge-obtainium.png" height="60">
-    </picture>
-  </a>
-    <a href="https://github.com/LawnchairLauncher/lawnchair/releases">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/badge-github.png" height="60">
-      <img alt="Get it on GitHub" src="docs/assets/badge-github.png" height="60">
-    </picture>
-  </a>
-</p>
+Full per-channel instructions and call examples (adb, deep link, HTTP, MCP, batch, shortcuts) are
+in the manual: **[English](docs/AI_CONTROL.md)** • **[中文](docs/AI_CONTROL.zh-CN.md)**.
 
-Lawnchair on Play Store will install as a different app from other sources. Some features may be restricted to comply with Google Play's publishing rules.
+### Other changes on top of upstream
 
-### Development builds
+- **No-drawer home (toggle):** flatten every app onto the workspace instead of an app drawer; the
+  classic drawer can be re-enabled with a single switch. A per-app "hidden from home" list is
+  included.
+- **Classic drag mode:** no spring-loaded zoom / top bar; page by hovering near the left/right edge
+  with a configurable trigger range (5%–30%, default 15%).
+- **Icon long-press menu:** customize which rows show and their order, plus a **Force Stop** entry.
+- **Folder upgrades:** an "add apps" editor (global de-duplication / return-to-desktop), a tight-fit
+  grid that avoids stray empty cells, and a default folder tint.
+- **In-app language switching** across 23 languages.
+- Log collection/export, reset settings to defaults, custom icon import, wallpaper blur, and several
+  experimental features promoted to stable.
 
-Interested in keeping yourself up-to-date with every Lawnchair development? Try our development builds!
+## Screenshots
 
-These builds offer the latest features and bug fixes at a cost of being slower and introducing new bugs. Ensure that you make backups before installing.
+Real captures from the `lawnWithQuickstepGithubDebug` build running on an Android 14 (API 34) device.
 
-**Download:** [Obtainium][Obtainium link] • [GitHub][GitHub link] • [nightly.link][Nightly link]
+| Home screen (no-drawer) | AI access channels |
+|:--:|:--:|
+| <img src="docs/assets/screenshots/home-no-drawer.png" alt="No-drawer home screen with apps flattened onto a tidy grid" width="260"> | <img src="docs/assets/screenshots/ai-access-channels.png" alt="AI access channels settings with a toggle per control channel" width="260"> |
 
-### Verification
+**Home screen (no-drawer).** With the no-drawer toggle on, every app is flattened directly onto the
+workspace instead of an app drawer — here eight apps sit in a tidy 4×2 grid, with the dock below.
+There is no drawer to swipe up; the classic drawer can be re-enabled with a single switch.
 
-Verify the integrity of your Lawnchair download using these SHA-256 hashes:
+**AI access channels.** *Settings → General → AI access channels* exposes one independent switch per
+control channel (broadcast, activity, service, provider, deep link, batch, HTTP, MCP, shortcut), each
+with a short description and a runnable example. Every channel is off by default. See
+[docs/AI_CONTROL.md](docs/AI_CONTROL.md) • [中文](docs/AI_CONTROL.zh-CN.md) for the full manual.
 
-###### Google Play
-```
-47:AC:92:63:1C:60:35:13:CC:8D:26:DD:9C:FF:E0:71:9A:8B:36:55:44:DC:CE:C2:09:58:24:EC:25:61:20:A7
-```
+**How to wire an AI up.** No special software is needed in the model — give it a short **system prompt**
+that lists the tools, or connect it over **MCP** so it auto-discovers them. The integration guide
+[docs/AI_INTEGRATION.md](docs/AI_INTEGRATION.md) • [中文](docs/AI_INTEGRATION.zh-CN.md) has a copy-paste
+prompt, MCP client configs (Claude Desktop, Python and TypeScript SDKs) and REST usage; a ready-made
+Skill ships at [`skills/launcher-control/SKILL.md`](skills/launcher-control/SKILL.md).
 
-###### Elsewhere
-```
-74:7C:36:45:B3:57:25:8B:2E:23:E8:51:E5:3C:96:74:7F:E0:AD:D0:07:E5:BA:2C:D9:7E:8C:85:57:2E:4D:C5
-```
+| Settings overview |
+|:--:|
+| <img src="docs/assets/screenshots/settings.png" alt="Lawnchair settings top-level list" width="260"> |
 
-## Contributing
+**Settings.** The launcher's settings entry points — General (where AI access channels and in-app
+language live), Home screen, Dock, App drawer, Search bar, Folders, Gestures, and more.
 
-Please visit the [Lawnchair Contributing Guidelines](CONTRIBUTING.md) for information and tips on contributing to Lawnchair.
+### Workspace & customization
 
-## Supporting Lawnchair
+| Icon long-press menu | Folder open | Add apps to folder | In-app language |
+|:--:|:--:|:--:|:--:|
+| <img src="docs/assets/screenshots/icon-long-press-menu.png" alt="Icon long-press popup with App info, Widgets and Customize" width="200"> | <img src="docs/assets/screenshots/folder-open.png" alt="Open folder with Edit Name and add-apps button" width="200"> | <img src="docs/assets/screenshots/folder-add-apps.png" alt="Add apps to folder editor with a checkable app grid" width="200"> | <img src="docs/assets/screenshots/language-switch.png" alt="Launcher language picker bottom sheet" width="200"> |
 
-If you love what we do, consider [supporting us on Open Collective](https://opencollective.com/lawnchair)! Your contributions help keep Lawnchair independent and enable us to develop faster.
+**Icon long-press menu.** Long-pressing a workspace icon shows a compact popup (App info, Widgets,
+Customize); which rows appear and in what order is configurable.
 
-A huge thank you to our **Core Backers ($5+)**:
-*(These backers directly fund our Project Velocity Fund)*
+**Folder.** Tapping a folder expands it in place, with *Edit Name* and a **＋** button. The folder grid
+is tight-fit so it avoids stray empty cells.
 
-[![Core Backers](https://opencollective.com/lawnchair/tiers/backer.svg?avatarHeight=64&width=890&button=false)](https://opencollective.com/lawnchair)
+**Add apps.** The **＋** opens an app picker where you tick which apps belong in the folder (already
+included apps are pre-checked), with global de-duplication / return-to-desktop behaviour.
 
-[Become a supporter](https://opencollective.com/lawnchair) to help us cover our operational costs, or become a Core Backer to be featured here!
+**In-app language.** *Settings → General → Launcher language* switches the launcher UI language on the
+spot across 23 languages, independent of the system language.
 
-## Quick links
+## Building
 
--   [Website](https://lawnchair.app)
--   [News on Telegram](https://t.me/lawnchairci)
--   [Discord](https://discord.com/invite/3x8qNWxgGZ)
--   [Lawnchair on X (formerly Twitter)](https://x.com/lawnchairapp)
--   [_XDA_ thread](https://xdaforums.com/t/lawnchair-customizable-pixel-launcher.3627137/)
+Open the project in Android Studio and select the **`lawnWithQuickstepGithubDebug`** build variant.
+The `@hide` Android APIs the launcher compiles against are supplied by the checked-in
+`prebuilts/libs/*.jar`, so no AOSP tree is required.
 
-You can view all our links in the [Lawnchair Wiki](https://github.com/LawnchairLauncher/lawnchair/wiki).
+## Upstream
 
-<!-- Download link -->
-[Nightly link]: https://nightly.link/LawnchairLauncher/lawnchair/workflows/ci/15-dev
-[Obtainium link]: https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22app.lawnchair.nightly%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Flawnchairlauncher%2Flawnchair%22%2C%22author%22%3A%22Lawnchair%20Launcher%22%2C%22name%22%3A%22Lawnchair%20(Debug)%22%2C%22preferredApkIndex%22%3A0%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Atrue%2C%5C%22fallbackToOlderReleases%5C%22%3Afalse%2C%5C%22filterReleaseTitlesByRegEx%5C%22%3A%5C%22Lawnchair%20Nightly%5C%22%2C%5C%22filterReleaseNotesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22verifyLatestTag%5C%22%3Afalse%2C%5C%22dontSortReleasesList%5C%22%3Afalse%2C%5C%22useLatestAssetDateAsReleaseDate%5C%22%3Afalse%2C%5C%22trackOnly%5C%22%3Afalse%2C%5C%22versionExtractionRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22matchGroupToUse%5C%22%3A%5C%22%5C%22%2C%5C%22versionDetection%5C%22%3Afalse%2C%5C%22releaseDateAsVersion%5C%22%3Atrue%2C%5C%22useVersionCodeAsOSVersion%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22invertAPKFilter%5C%22%3Afalse%2C%5C%22autoApkFilterByArch%5C%22%3Atrue%2C%5C%22appName%5C%22%3A%5C%22%5C%22%2C%5C%22shizukuPretendToBeGooglePlay%5C%22%3Afalse%2C%5C%22exemptFromBackgroundUpdates%5C%22%3Afalse%2C%5C%22skipUpdateNotifications%5C%22%3Afalse%2C%5C%22about%5C%22%3A%5C%22Lawnchair%20is%20a%20free%2C%20open-source%20home%20app%20for%20Android.%20(NOTE%3A%20This%20is%20the%20debug%20version%20of%20Lawnchair%2C%20for%20the%20beta%2Fstable%20versions%20see%20%5C%5C%5C%22Lawnchair%5C%5C%5C%22)%5C%22%7D%22%7D
-[GitHub link]: https://github.com/LawnchairLauncher/lawnchair/releases/tag/nightly
+This branch is based on the official **Lawnchair 15.0.0-beta3.0** tag. Lawnchair itself is a free,
+open-source home app for Android that starts from Launcher3 and ports Pixel Launcher features while
+adding rich customization. All credit for the base project goes to the
+[Lawnchair team](https://lawnchair.app); see their [main repository](https://github.com/LawnchairLauncher/lawnchair)
+for the original project, releases, and contribution channels.
+
+- Compare against upstream: `v15.0.0-beta3.0...lawnchair-enhancements`
+- Upstream community: [Telegram](https://t.me/lccommunity) • [Discord](https://discord.gg/3x8qNWxgGZ)

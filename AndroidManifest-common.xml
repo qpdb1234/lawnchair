@@ -193,5 +193,119 @@
         <property
             android:name="android.window.PROPERTY_ACTIVITY_EMBEDDING_SPLITS_ENABLED"
             android:value="true" />
+
+        <!--
+        ==== AI control channels (nine entry points; every
+        one is gated by a settings switch) ====
+        Entry points 1,2,3,4,6 sit behind android:permission=DUMP, so only adb shell /
+        root can reach them; entries 5 (deep link), 7 (HTTP), 8 (MCP) and 9 (shortcut)
+        deliberately carry no permission so on-device apps / the browser / a voice
+        assistant can drive them. Every one of them only acts when its matching
+        "pref_enable_adb_*" switch is on (default all off); see the AI control screen in
+        settings. Component / action names are the launcher3 ones (the classes still live
+        in com.android.launcher3), independent of the applicationId.
+        -->
+        <!-- Entry point 1: broadcast receiver (am broadcast). -->
+        <receiver
+            android:name="com.android.launcher3.AdbControlReceiver"
+            android:exported="true"
+            android:enabled="true"
+            android:directBootAware="false"
+            android:permission="android.permission.DUMP">
+            <intent-filter>
+                <action android:name="com.android.launcher3.adb.COMMAND" />
+                <action android:name="com.android.launcher3.adb.LIST_ICONS" />
+                <action android:name="com.android.launcher3.adb.MOVE_ICON" />
+                <action android:name="com.android.launcher3.adb.ADD_ICON" />
+                <action android:name="com.android.launcher3.adb.REMOVE_ICON" />
+                <action android:name="com.android.launcher3.adb.RELOAD" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Entry point 2: headless Activity (am start). NoDisplay, no recents, no history. -->
+        <activity
+            android:name="com.android.launcher3.AdbControlActivity"
+            android:exported="true"
+            android:enabled="true"
+            android:directBootAware="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:permission="android.permission.DUMP"
+            android:theme="@android:style/Theme.NoDisplay" />
+
+        <!-- Entry point 5: launcher://control deep link. No permission in front of it, so
+            any on-device app can drive it while its switch is on; the caller package is
+            logged every time. -->
+        <activity
+            android:name="com.android.launcher3.AdbControlLinkActivity"
+            android:exported="true"
+            android:enabled="true"
+            android:directBootAware="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="launcher" android:host="control" />
+            </intent-filter>
+        </activity>
+
+        <!-- Entry point 9: headless target of the static shortcuts. No permission (the
+            system fires these intents on the user's tap); the switch is the only gate. -->
+        <activity
+            android:name="com.android.launcher3.AdbControlShortcutActivity"
+            android:exported="true"
+            android:enabled="true"
+            android:directBootAware="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoDisplay" />
+
+        <!-- Entry point 3: short-lived service (am start-service). Runs past the 10s
+            broadcast window, START_NOT_STICKY, no residue. -->
+        <service
+            android:name="com.android.launcher3.AdbControlService"
+            android:exported="true"
+            android:enabled="true"
+            android:directBootAware="false"
+            android:permission="android.permission.DUMP" />
+
+        <!-- Entry point 4 and 6: ContentProvider. call() = synchronous command returning a
+            Bundle; insert()/bulkInsert() = structured batch. authority
+            ${applicationId}.aicontrol (AdbControlProvider builds its return URI from
+            getPackageName() so it matches this per build variant). -->
+        <provider
+            android:name="com.android.launcher3.AdbControlProvider"
+            android:authorities="${applicationId}.aicontrol"
+            android:exported="true"
+            android:enabled="true"
+            android:directBootAware="false"
+            android:permission="android.permission.DUMP" />
+
+        <!--
+        Entry point #9 (shortcuts). Static shortcuts are only parsed for a component with
+        MAIN + LAUNCHER, so the two commands of res/xml/launcher_control_shortcuts.xml
+        hang on this alias. It is declared disabled: AdbControlShortcuts enables it while
+        "pref_enable_adb_shortcut" is on and disables it again when the switch goes off,
+        so a closed channel leaves no icon and no shortcut behind. Tapping the icon opens
+        the settings screen; the commands are the long-press entries.
+        -->
+        <activity-alias
+            android:name="com.android.launcher3.LauncherControl"
+            android:targetActivity="app.lawnchair.ui.preferences.PreferenceActivity"
+            android:exported="true"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_home"
+            android:label="@string/adb_shortcut_host_label">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/launcher_control_shortcuts" />
+        </activity-alias>
     </application>
 </manifest>

@@ -38,7 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import app.lawnchair.backup.LawnchairBackup
 import app.lawnchair.flowerpot.Flowerpot
+import app.lawnchair.log.LogCollector
 import app.lawnchair.preferences.PreferenceManager
+import app.lawnchair.preferences2.PreferenceManager2
 import app.lawnchair.ui.ModalBottomSheetContent
 import app.lawnchair.ui.preferences.destinations.openAppInfo
 import app.lawnchair.util.restartLauncher
@@ -51,6 +53,7 @@ import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import com.android.quickstep.RecentsActivity
 import com.android.systemui.shared.system.QuickStepContract
+import com.patrykmichalik.opto.core.firstBlocking
 import java.io.File
 
 class LawnchairApp : Application() {
@@ -66,6 +69,20 @@ class LawnchairApp : Application() {
         instance = this
         QuickStepContract.sRecentsDisabled = !recentsEnabled
         Flowerpot.Manager.getInstance(this)
+        restoreLogCollection()
+    }
+
+    private fun restoreLogCollection() {
+        // PreferenceManager2 is a MainThreadInitializedObject: grab it on main (onCreate is
+        // already on the main thread), then read the DataStore-backed flag off the main thread.
+        val prefs2 = PreferenceManager2.getInstance(this)
+        Thread {
+            runCatching {
+                if (prefs2.logCollectionEnabled.firstBlocking()) {
+                    LogCollector.setEnabled(this, true)
+                }
+            }
+        }.also { it.isDaemon = true }.start()
     }
 
     fun hideClockInStatusBar() {

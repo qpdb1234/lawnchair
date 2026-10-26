@@ -17,19 +17,25 @@
 package app.lawnchair.ui.preferences.destinations
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import app.lawnchair.preferences.ResetPreferences
+import app.lawnchair.preferences.SettingsCategory
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
 import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.ui.preferences.LocalIsExpandedScreen
 import app.lawnchair.ui.preferences.components.colorpreference.ColorPreference
+import app.lawnchair.ui.preferences.components.controls.ClickablePreference
 import app.lawnchair.ui.preferences.components.controls.SliderPreference
 import app.lawnchair.ui.preferences.components.controls.SwitchPreference
 import app.lawnchair.ui.preferences.components.layout.ExpandAndShrink
 import app.lawnchair.ui.preferences.components.layout.PreferenceGroup
 import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
 import com.android.launcher3.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun FolderPreferences(
@@ -42,6 +48,8 @@ fun FolderPreferences(
     ) {
         val prefs = preferenceManager()
         val prefs2 = preferenceManager2()
+        val context = LocalContext.current
+        val scope = rememberCoroutineScope()
         PreferenceGroup(heading = stringResource(id = R.string.general_label)) {
             ColorPreference(preference = prefs2.folderColor)
             SliderPreference(
@@ -88,6 +96,15 @@ fun FolderPreferences(
                     valueRange = 0.5F..1.5F,
                     showAsPercentage = true,
                 )
+            }
+        }
+
+        PreferenceGroup {
+            ClickablePreference(
+                label = stringResource(id = R.string.reset_category_label),
+                confirmationText = stringResource(id = R.string.reset_category_confirmation),
+            ) {
+                scope.launch { ResetPreferences.resetCategory(context, SettingsCategory.Folders) }
             }
         }
     }

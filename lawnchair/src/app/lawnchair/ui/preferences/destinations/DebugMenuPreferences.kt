@@ -62,7 +62,6 @@ fun DebugMenuPreferences(
                     onClick = {
                         runBlocking {
                             liveInfoManager.liveInformation.set(LiveInformation())
-                            liveInfoManager.dismissedAnnouncementIds.set(emptySet())
                         }
                     },
                 )

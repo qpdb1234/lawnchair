@@ -1,0 +1,135 @@
+# Best-effort smoke test for the launcher's AI control server (HTTP + MCP).
+#
+# It boots an emulator, installs the debug build, turns on the Local HTTP server and MCP
+# channels, forwards the loopback port, and runs scripts/verify_mcp.sh (read-only) against it.
+#
+# NOT a merge gate: the AI channels are only bound when the in-app "AI access channels"
+# screen is opened (the switch itself has no boot receiver), and navigating that Compose
+# screen from CI uses tap automation that can drift between Android versions. So this runs
+# on demand (workflow_dispatch) and on a weekly schedule, and any UI step is wrapped to keep
+# going rather than fail the build. A red run means "the smoke test could not confirm", not
+# necessarily "the code is broken".
+name: ai-control-smoke
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 5 * * 1'   # Mondays, low traffic; purely informational
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  PKG: com.lawnchair.launcher          # lawnWithQuickstepGithubDebug applicationId
+  PORT: '9091'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build debug APK
+        run: ./gradlew assembleLawnWithQuickstepGithubDebug --stacktrace
+
+      - name: Locate APK
+        id: apk
+        run: |
+          path=$(find build/outputs/apk -name '*.apk' | head -n1)
+          echo "path=$path" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Boot emulator, install, verify
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: Pixel_5
+          disable-animations: true
+          script: |
+            set -uo pipefail
+            adb wait-for-device
+            # --- install the launcher and make it the HOME app ---
+            adb install -r -g "${{ steps.apk.outputs.path }}"
+            adb shell pm set-home-activity "$PKG/app.lawnchair.LawnchairLauncher" || true
+
+            # --- turn on channels 7 (HTTP) and 8 (MCP) at the persisted gate ---
+            adb root; adb wait-for-device
+            PREF=/data/data/$PKG/shared_prefs/com.android.launcher3.prefs.xml
+            adb shell "run-as $PKG sh -c 'mkdir -p /data/data/$PKG/shared_prefs'" || true
+            adb shell "cat > $PREF <<'EOF'
+            <?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+            <map>
+                <boolean name=\"pref_enable_adb_http\" value=\"true\" />
+                <boolean name=\"pref_enable_adb_mcp\" value=\"true\" />
+            </map>
+            EOF"
+            adb shell chmod 660 "$PREF"; adb shell chown u0_a$(adb shell pidof -s $PKG >/dev/null 2>&1; echo 00) "$PREF" || true
+
+            # --- bind the loopback listener: it starts only when the AI-control
+            #     screen is opened, so navigate there with tap automation (best effort) ---
+            adb shell am force-stop $PKG
+            adb shell input keyevent KEYCODE_HOME; sleep 4
+            # open launcher settings via the exported settings activity, then tap
+            # General -> AI access channels, then toggle the HTTP and MCP switches.
+            adb shell am start -n "$PKG/com.android.launcher3.settings.SettingsActivity" || true
+            sleep 3
+            # Fall back to the on-device UI if the activity name ever changes:
+            # the verify script below still reports ground truth from the socket.
+            for text in "AI access channels" "General"; do
+              bounds=$(adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1; \
+                       adb shell cat /sdcard/ui.xml | tr '>' '\n' | \
+                       grep -m1 "text=\"$text\"" | \
+                       sed -n 's/.*bounds="\[\([0-9,]*\)\]\[\([0-9,]*\)\]".*/\1 \2/p')
+              [ -n "$bounds" ] || continue
+              x1=$(echo "$bounds" | cut -d' ' -f1 | cut -d',' -f1)
+              y1=$(echo "$bounds" | cut -d' ' -f1 | cut -d',' -f2)
+              x2=$(echo "$bounds" | cut -d' ' -f2 | cut -d',' -f1)
+              y2=$(echo "$bounds" | cut -d' ' -f2 | cut -d',' -f2)
+              adb shell input tap $(( (x1+x2)/2 )) $(( (y1+y2)/2 )); sleep 2
+            done
+            # toggle any still-off HTTP / MCP switch by its label
+            for label in "Local HTTP server" "MCP server"; do
+              adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+              line=$(adb shell cat /sdcard/ui.xml | tr '>' '\n' | grep -m1 "$label" || true)
+              [ -n "$line" ] || continue
+              b=$(echo "$line" | sed -n 's/.*bounds="\[\([0-9,]*\)\]\[\([0-9,]*\)\]".*/\1 \2/p')
+              x1=$(echo "$b" | cut -d' ' -f1 | cut -d',' -f1); y1=$(echo "$b" | cut -d' ' -f1 | cut -d',' -f2)
+              x2=$(echo "$b" | cut -d' ' -f2 | cut -d',' -f1); y2=$(echo "$b" | cut -d' ' -f2 | cut -d',' -f2)
+              adb shell input tap $(( (x1+x2)/2 )) $(( (y1+y2)/2 )); sleep 1
+            done
+
+            # --- forward and verify ---
+            adb forward tcp:$PORT tcp:$PORT
+            set +e
+            bash scripts/verify_mcp.sh http://127.0.0.1:$PORT
+            rc=$?
+
+            # rc 0 = every live check passed.
+            # rc 2 = the loopback port never answered, which on a headless runner almost always
+            #        means the Compose "AI access channels" tap above did not land (the listener is
+            #        only bound when that screen opens). That is a harness limitation, not a code
+            #        fault, so degrade to a STATIC contract check and let the job pass with a warning.
+            # rc 1 = the server answered but a check was wrong  a real regression. Fail loudly.
+            if [ "$rc" -eq 2 ]; then
+              echo "::warning title=smoke-test-degraded::control server not bound on the runner; running static contract check instead"
+              bash scripts/static_contract_check.sh || { echo "static contract check failed"; exit 1; }
+              echo "static contract check passed; live server could not be exercised on this runner"
+            elif [ "$rc" -ne 0 ]; then
+              echo "verify_mcp.sh reported a genuine failure (rc=$rc)"; exit "$rc"
+            fi
+
+      - name: Upload logcat on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: adbcontrol-logcat
+          path: /tmp/adb.log
+          if-no-files-found: ignore

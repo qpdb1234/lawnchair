@@ -323,6 +323,11 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
         mPageIndicator = findViewById(R.id.folder_page_indicator);
         mFooter = findViewById(R.id.folder_footer);
         mFooterHeight = dp.folderFooterHeightPx;
+
+        View folderAddButton = findViewById(R.id.folder_add_button);
+        if (folderAddButton != null) {
+            folderAddButton.setOnClickListener(v -> FolderAddDialog.show(this));
+        }
         mFolderName = findViewById(R.id.folder_name);
         mFolderName.setTextSize(TypedValue.COMPLEX_UNIT_PX, dp.folderLabelTextSizePx);
         mFolderName.setOnBackKeyListener(this);

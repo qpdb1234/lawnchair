@@ -23,13 +23,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.lawnchair.preferences.PreferenceManager
+import app.lawnchair.preferences.ResetPreferences
+import app.lawnchair.preferences.SettingsCategory
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
 import app.lawnchair.preferences2.PreferenceManager2
@@ -42,6 +46,7 @@ import app.lawnchair.ui.preferences.components.WithWallpaper
 import app.lawnchair.ui.preferences.components.clipToBottomPercentage
 import app.lawnchair.ui.preferences.components.colorpreference.ColorPreference
 import app.lawnchair.ui.preferences.components.controls.MainSwitchPreference
+import app.lawnchair.ui.preferences.components.controls.ClickablePreference
 import app.lawnchair.ui.preferences.components.controls.SliderPreference
 import app.lawnchair.ui.preferences.components.controls.SwitchPreference
 import app.lawnchair.ui.preferences.components.createPreviewIdp
@@ -51,11 +56,14 @@ import app.lawnchair.ui.preferences.components.layout.PreferenceGroup
 import app.lawnchair.ui.preferences.components.layout.PreferenceGroupHeading
 import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
 import com.android.launcher3.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun DockPreferences(modifier: Modifier = Modifier) {
     val prefs = preferenceManager()
     val prefs2 = preferenceManager2()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     PreferenceLayout(
         label = stringResource(id = R.string.dock_label),
@@ -84,6 +92,15 @@ fun DockPreferences(modifier: Modifier = Modifier) {
                     adapter = prefs2.enableLabelInDock.getAdapter(),
                     label = stringResource(id = R.string.show_labels),
                 )
+            }
+        }
+
+        PreferenceGroup {
+            ClickablePreference(
+                label = stringResource(id = R.string.reset_category_label),
+                confirmationText = stringResource(id = R.string.reset_category_confirmation),
+            ) {
+                scope.launch { ResetPreferences.resetCategory(context, SettingsCategory.Dock) }
             }
         }
     }

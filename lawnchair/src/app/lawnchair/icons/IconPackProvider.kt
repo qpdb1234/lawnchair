@@ -28,6 +28,11 @@ class IconPackProvider(private val context: Context) : SafeCloseable {
         if (packageName.isEmpty()) {
             return null
         }
+        if (packageName == CustomImageIconPack.PACK_PACKAGE_NAME) {
+            return iconPacks.getOrPut(packageName) {
+                CustomImageIconPack(context, packageName)
+            }
+        }
         return iconPacks.getOrPut(packageName) {
             try {
                 CustomIconPack(context, packageName)

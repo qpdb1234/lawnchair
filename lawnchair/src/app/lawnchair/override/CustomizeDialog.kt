@@ -36,13 +36,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.lawnchair.gestures.type.GestureType
 import app.lawnchair.launcher
-import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
 import app.lawnchair.preferences2.asState
 import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.ui.preferences.PreferenceActivity
 import app.lawnchair.ui.preferences.components.AppGesturePreference
-import app.lawnchair.ui.preferences.components.controls.SwitchPreference
 import app.lawnchair.ui.preferences.components.layout.ClickableIcon
 import app.lawnchair.ui.preferences.components.layout.PreferenceGroup
 import app.lawnchair.ui.preferences.navigation.SelectIcon
@@ -141,9 +139,6 @@ fun CustomizeAppDialog(
 ) {
     val prefs = preferenceManager()
     val preferenceManager2 = preferenceManager2()
-    val showComponentNames by preferenceManager2.showComponentNames.asState()
-    val hiddenApps by preferenceManager2.hiddenApps.asState()
-    val adapter = preferenceManager2.hiddenApps.getAdapter()
     val context = LocalContext.current
     var title by remember {
         mutableStateOf(prefs.customAppName[componentKey] ?: defaultTitle)
@@ -182,22 +177,6 @@ fun CustomizeAppDialog(
         launchSelectIcon = openIconPicker,
         modifier = modifier,
     ) {
-        PreferenceGroup(
-            description = componentKey.componentName.flattenToString(),
-            showDescription = showComponentNames,
-        ) {
-            val stringKey = componentKey.toString()
-            SwitchPreference(
-                checked = hiddenApps.contains(stringKey),
-                label = stringResource(id = R.string.hide_from_drawer),
-                onCheckedChange = { newValue ->
-                    val newSet = hiddenApps.toMutableSet()
-                    if (newValue) newSet.add(stringKey) else newSet.remove(stringKey)
-                    adapter.onChange(newSet)
-                },
-            )
-        }
-
         if (preferenceManager2.iconSwipeGestures.asState().value && context.launcher.stateManager.state != LauncherState.ALL_APPS) {
             PreferenceGroup(heading = stringResource(R.string.gestures_label)) {
                 listOf(

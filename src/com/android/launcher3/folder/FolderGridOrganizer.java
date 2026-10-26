@@ -98,6 +98,17 @@ public class FolderGridOrganizer {
      * maintaining the restrictions of {@link #mMaxCountX} &amp; {@link #mMaxCountY}.
      */
     private void calculateGridSize(int count) {
+        // Tight-fit: prefer a grid that leaves no cell empty
+        // and stays reasonably square. tightGrid answers -1 for a folder that fills the profile or
+        // for any count it declines to judge, in which case the original nearest-to-square layout
+        // below is kept untouched.
+        int tight = FolderFit.tightGrid(count, mMaxCountX, mMaxCountY);
+        if (tight >= 0) {
+            mCountX = tight >>> 16;
+            mCountY = tight & 0xffff;
+            return;
+        }
+
         boolean done;
         int gridCountX = mCountX;
         int gridCountY = mCountY;

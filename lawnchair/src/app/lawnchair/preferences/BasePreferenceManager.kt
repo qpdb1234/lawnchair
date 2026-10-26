@@ -85,6 +85,20 @@ sealed class BasePreferenceManager(private val context: Context) : SharedPrefere
         }
     }
 
+    // Removes the given SharedPreferences keys so each pref falls back to its default on next read.
+    // Only keys that are registered in prefsMap are touched, so unrelated internal keys ("version",
+    // cached grid state, ...) are never deleted. Used by the per-section settings reset.
+    fun removeKeys(names: Collection<String>) {
+        if (names.isEmpty()) return
+        sp.edit { names.forEach { if (prefsMap.containsKey(it)) remove(it) } }
+    }
+
+    // Removes every registered preference key except those in [keep], restoring all settings to
+    // their defaults while preserving user data. Used by the global settings reset.
+    fun removeAllRegisteredKeysExcept(keep: Set<String>) {
+        sp.edit { prefsMap.keys.filter { it !in keep }.forEach { remove(it) } }
+    }
+
     private inline fun editSp(crossinline block: SharedPreferences.Editor.() -> Unit) {
         if (inBatchMode) {
             block(editor!!)

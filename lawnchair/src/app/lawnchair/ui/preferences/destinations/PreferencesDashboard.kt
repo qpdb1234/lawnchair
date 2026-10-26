@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Backup
-import androidx.compose.material.icons.outlined.Science
 import androidx.compose.material.icons.outlined.SettingsBackupRestore
 import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.Build
@@ -32,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -43,15 +43,13 @@ import app.lawnchair.LawnchairApp
 import app.lawnchair.LawnchairLauncher
 import app.lawnchair.backup.ui.restoreBackupOpener
 import app.lawnchair.backup.ui.restoreNovaBackupOpener
-import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.observeAsState
 import app.lawnchair.preferences.preferenceManager
-import app.lawnchair.preferences2.preferenceManager2
+import app.lawnchair.preferences.ResetPreferences
 import app.lawnchair.ui.OverflowMenu
 import app.lawnchair.ui.preferences.LocalNavController
-import app.lawnchair.ui.preferences.components.AnnouncementPreference
 import app.lawnchair.ui.preferences.components.controls.PreferenceCategory
-import app.lawnchair.ui.preferences.components.controls.WarningPreference
+import app.lawnchair.ui.preferences.components.controls.ClickablePreference
 import app.lawnchair.ui.preferences.components.layout.ClickableIcon
 import app.lawnchair.ui.preferences.components.layout.DividerColumn
 import app.lawnchair.ui.preferences.components.layout.PreferenceDivider
@@ -63,7 +61,6 @@ import app.lawnchair.ui.preferences.navigation.AppDrawer
 import app.lawnchair.ui.preferences.navigation.CreateBackup
 import app.lawnchair.ui.preferences.navigation.DebugMenu
 import app.lawnchair.ui.preferences.navigation.Dock
-import app.lawnchair.ui.preferences.navigation.ExperimentalFeatures
 import app.lawnchair.ui.preferences.navigation.Folders
 import app.lawnchair.ui.preferences.navigation.General
 import app.lawnchair.ui.preferences.navigation.Gestures
@@ -79,6 +76,7 @@ import app.lawnchair.util.isDefaultLauncher
 import app.lawnchair.util.restartLauncher
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun PreferencesDashboard(
@@ -88,7 +86,6 @@ fun PreferencesDashboard(
 ) {
     val context = LocalContext.current
     SyncLiveInformation()
-    val pref2 = preferenceManager2()
 
     PreferenceLayout(
         label = stringResource(id = R.string.settings),
@@ -97,13 +94,6 @@ fun PreferencesDashboard(
         backArrowVisible = false,
         actions = { PreferencesOverflowMenu(currentRoute = currentRoute, onNavigate = onNavigate) },
     ) {
-        AnnouncementPreference()
-
-        if (BuildConfig.APPLICATION_ID.contains("nightly") || BuildConfig.DEBUG) {
-            PreferencesDebugWarning()
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
         if (!context.isDefaultLauncher()) {
             PreferencesSetDefaultLauncherWarning()
             Spacer(modifier = Modifier.height(8.dp))
@@ -142,16 +132,13 @@ fun PreferencesDashboard(
                 isSelected = currentRoute is Dock,
             )
 
-            val deckLayout = pref2.deckLayout.getAdapter()
-            if (!deckLayout.state.value) {
-                PreferenceCategory(
-                    label = stringResource(R.string.app_drawer_label),
-                    description = stringResource(R.string.app_drawer_description),
-                    iconResource = R.drawable.ic_app_drawer,
-                    onNavigate = { onNavigate(AppDrawer) },
-                    isSelected = currentRoute is AppDrawer,
-                )
-            }
+            PreferenceCategory(
+                label = stringResource(R.string.app_drawer_label),
+                description = stringResource(R.string.app_drawer_description),
+                iconResource = R.drawable.ic_app_drawer,
+                onNavigate = { onNavigate(AppDrawer) },
+                isSelected = currentRoute is AppDrawer,
+            )
 
             PreferenceCategory(
                 label = stringResource(R.string.search_bar_label),
@@ -193,6 +180,18 @@ fun PreferencesDashboard(
                 iconResource = R.drawable.ic_about,
                 onNavigate = { onNavigate(About) },
                 isSelected = currentRoute is About,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        val scope = rememberCoroutineScope()
+        PreferenceCategoryGroup {
+            ClickablePreference(
+                label = stringResource(R.string.reset_all_label),
+                confirmationText = stringResource(R.string.reset_all_confirmation),
+                onClick = {
+                    scope.launch { ResetPreferences.resetAll(context) }
+                },
             )
         }
     }
@@ -247,15 +246,7 @@ fun RowScope.PreferencesOverflowMenu(
     val openRestoreBackup = restoreBackupOpener()
     val openRestoreNovaBackup = restoreNovaBackupOpener()
     OverflowMenu(
-        modifier = modifier.addIf(
-            listOf(ExperimentalFeatures).any {
-                currentRoute == it
-            },
-        ) {
-            Modifier
-                .clip(highlightShape)
-                .background(highlightColor)
-        },
+        modifier = modifier,
     ) {
         val context = LocalContext.current
         DropdownMenuItem(
@@ -288,22 +279,6 @@ fun RowScope.PreferencesOverflowMenu(
             },
             text = {
                 Text(text = stringResource(id = R.string.debug_restart_launcher))
-            },
-        )
-        DropdownMenuItem(
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Outlined.Science,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            },
-            onClick = {
-                onNavigate(ExperimentalFeatures)
-                hideMenu()
-            },
-            text = {
-                Text(text = stringResource(id = R.string.experimental_features_label))
             },
         )
         PreferenceDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -354,22 +329,6 @@ fun RowScope.PreferencesOverflowMenu(
             text = {
                 Text(text = stringResource(id = R.string.restore_nova_backup))
             },
-        )
-    }
-}
-
-@Composable
-fun PreferencesDebugWarning(
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        modifier = modifier.padding(horizontal = 16.dp),
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.errorContainer,
-    ) {
-        WarningPreference(
-            // Don't move to strings.xml, no need to translate this warning
-            text = "You are using a development build, which may contain bugs and broken features. Use at your own risk!",
         )
     }
 }

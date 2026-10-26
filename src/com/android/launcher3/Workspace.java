@@ -244,6 +244,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
     private SpringLoadedDragController mSpringLoadedDragController;
 
+    // The neighbor page currently armed for a classic-drag edge snap; null when none is armed.
+    private CellLayout mClassicEdgeTarget;
+
     private boolean mIsSwitchingState = false;
 
     boolean mChildrenLayersEnabled = true;
@@ -566,7 +569,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             }
         }
 
-        if (!mLauncher.isInState(EDIT_MODE)) {
+        if (!mLauncher.isInState(EDIT_MODE) && !isClassicDrag()) {
+            // Classic drag keeps the workspace at NORMAL (no spring-loaded zoom and no top bar);
+            // paging is handled in onDragOver via edge hovering.
             mLauncher.getStateManager().goToState(SPRING_LOADED);
         }
         mStatsLogManager.logger().withItemInfo(dragObject.dragInfo)
@@ -589,18 +594,27 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         }
 
         updateChildrenLayersEnabled();
-        StateManager<LauncherState, Launcher> stateManager = mLauncher.getStateManager();
-        stateManager.addStateListener(new StateManager.StateListener<LauncherState>() {
-            @Override
-            public void onStateTransitionComplete(LauncherState finalState) {
-                if (finalState == NORMAL) {
-                    if (!mDeferRemoveExtraEmptyScreen) {
-                        removeExtraEmptyScreen(true /* stripEmptyScreens */);
-                    }
-                    stateManager.removeStateListener(this);
-                }
+        if (isClassicDrag()) {
+            // Classic drag never leaves NORMAL, so the state-transition listener below would not
+            // fire; strip the extra empty page directly instead.
+            mClassicEdgeTarget = null;
+            if (!mDeferRemoveExtraEmptyScreen) {
+                removeExtraEmptyScreen(true /* stripEmptyScreens */);
             }
-        });
+        } else {
+            StateManager<LauncherState, Launcher> stateManager = mLauncher.getStateManager();
+            stateManager.addStateListener(new StateManager.StateListener<LauncherState>() {
+                @Override
+                public void onStateTransitionComplete(LauncherState finalState) {
+                    if (finalState == NORMAL) {
+                        if (!mDeferRemoveExtraEmptyScreen) {
+                            removeExtraEmptyScreen(true /* stripEmptyScreens */);
+                        }
+                        stateManager.removeStateListener(this);
+                    }
+                }
+            });
+        }
 
         mDragInfo = null;
         mDragSourceInternal = null;
@@ -2673,10 +2687,16 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
         final View child = (mDragInfo == null) ? null : mDragInfo.cell;
         if (setDropLayoutForDragObject(d, mDragViewVisualCenter[0], mDragViewVisualCenter[1])) {
-            if (mDragTargetLayout == null || mLauncher.isHotseatLayout(mDragTargetLayout)) {
-                mSpringLoadedDragController.cancel();
-            } else {
-                mSpringLoadedDragController.setAlarm(mDragTargetLayout);
+            // Classic drag owns the shared SpringLoadedDragController exclusively through
+            // handleClassicEdgePaging below. Arming it here on a transient drop layout (e.g. the
+            // page just left while the snap animation is still running) would fire once the finger
+            // stops emitting drag-over events and bounce the workspace back by one page.
+            if (!isClassicDrag()) {
+                if (mDragTargetLayout == null || mLauncher.isHotseatLayout(mDragTargetLayout)) {
+                    mSpringLoadedDragController.cancel();
+                } else {
+                    mSpringLoadedDragController.setAlarm(mDragTargetLayout);
+                }
             }
         }
 
@@ -2717,6 +2737,78 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 if (mDragTargetLayout != null) {
                     mDragTargetLayout.revertTempState();
                 }
+            }
+        }
+
+        if (isClassicDrag()) {
+            // Without the spring-loaded zoom the neighbor pages stay off-screen, so the peek-and
+            // -hover paging above never triggers. Emulate classic paging instead: hovering the
+            // dragged icon near the left/right screen edge snaps to that neighbor page.
+            handleClassicEdgePaging(d);
+        }
+    }
+
+    private boolean isClassicDrag() {
+        return PreferenceExtensionsKt.firstBlocking(mPreferenceManager2.getClassicDragMode());
+    }
+
+    /**
+     * Fraction of the screen width a hovered dragged item must reach into from an edge before
+     * classic-drag paging arms. Backed by the user-facing "edge trigger range" preference and
+     * clamped to the slider's bounds so a stray value can never make edge paging unreachable or
+     * cover the whole screen.
+     */
+    private float getClassicDragEdgeFraction() {
+        float fraction = PreferenceExtensionsKt.firstBlocking(
+                mPreferenceManager2.getClassicDragEdgeFraction());
+        return Math.min(Math.max(fraction, 0.05f), 0.3f);
+    }
+
+    /**
+     * Classic (non spring-loaded) drag paging. When the dragged item is held near the left or
+     * right edge, arm the shared {@link SpringLoadedDragController} on the corresponding neighbor
+     * page so a short hover snaps to it. The alarm is only re-armed when the target page changes,
+     * because {@link SpringLoadedDragController#setAlarm} restarts the hover timer on every call
+     * and a per-frame call would prevent it from ever firing.
+     */
+    private void handleClassicEdgePaging(DragObject d) {
+        CellLayout neighbor = null;
+        if (!isPageInTransition()) {
+            int nextPage = getNextPage();
+            CellLayout currentPage = (CellLayout) getChildAt(nextPage);
+            if (currentPage != null) {
+                // d.x lives in the workspace content coordinate space (it grows by the horizontal
+                // scroll offset as pages are laid out side by side), so measure the edge zones from
+                // the current page's own content bounds. Comparing against the drag-layer screen
+                // width instead makes the left edge read as the right edge on every page except 0.
+                int edge = (int) (currentPage.getWidth() * getClassicDragEdgeFraction());
+                int neighborIndex = -1;
+                boolean overLeft = d.x <= currentPage.getLeft() + edge;
+                boolean overRight = d.x >= currentPage.getRight() - edge;
+                if (mIsRtl) {
+                    if (overLeft) {
+                        neighborIndex = nextPage + 1;
+                    } else if (overRight) {
+                        neighborIndex = nextPage - 1;
+                    }
+                } else {
+                    if (overLeft) {
+                        neighborIndex = nextPage - 1;
+                    } else if (overRight) {
+                        neighborIndex = nextPage + 1;
+                    }
+                }
+                if (neighborIndex >= 0 && neighborIndex < getPageCount()) {
+                    neighbor = (CellLayout) getChildAt(neighborIndex);
+                }
+            }
+        }
+        if (neighbor != mClassicEdgeTarget) {
+            mClassicEdgeTarget = neighbor;
+            if (neighbor != null) {
+                mSpringLoadedDragController.setAlarm(neighbor);
+            } else {
+                mSpringLoadedDragController.cancel();
             }
         }
     }
@@ -3345,6 +3437,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 throw new RuntimeException("Invalid state: cellLayout == null in "
                         + "Workspace#onDropCompleted. Please file a bug. ");
             }
+            // The drop was not accepted (e.g. released on the Cancel drop target), so the item
+            // stays where it was. Re-show the cell that was hidden when the drag started.
+            mDragInfo.cell.setVisibility(VISIBLE);
         }
         View cell = getHomescreenIconByItemId(d.originalDragInfo.id);
         if (d.cancelled && cell != null) {

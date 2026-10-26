@@ -68,10 +68,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import app.lawnchair.deck.LawndeckManager;
 import app.lawnchair.preferences.PreferenceManager;
-import app.lawnchair.preferences2.PreferenceManager2;
-import com.patrykmichalik.opto.core.PreferenceExtensionsKt;
 
 /**
  * Handles updates due to changes in package manager (app installed/updated/removed)
@@ -460,16 +457,17 @@ public class PackageUpdatedTask implements ModelUpdateTask {
                 dataModel.widgetsModel.update(app, new PackageUserKey(packages[i], mUser));
             }
             taskController.bindUpdatedWidgets(dataModel);
-            
-            // If deck layout is enabled, add newly installed apps to workspace with categorization
-            PreferenceManager2 pref2 = PreferenceManager2.INSTANCE.get(context);
-            if (PreferenceExtensionsKt.firstBlocking(pref2.getDeckLayout())) {
-                LawndeckManager deckManager = new LawndeckManager(context);
-                ModelWriter modelWriter = taskController.getModelWriter();
-                for (int i = 0; i < N; i++) {
-                    deckManager.addNewlyInstalledApp(packages[i], mUser, modelWriter, dataModel);
-                }
-            }
+        }
+
+        // In no-drawer mode the whole drawer is mirrored onto the workspace, but that flatten pass
+        // normally only runs on a full bind (bindComplete). A freshly installed app reaches the
+        // AllAppsList here without any full bind, so it never appears on the home screen unless we
+        // re-run the flatten. A fresh install arrives as OP_ADD, while an app becoming available
+        // again (re-enabled system app, install on external media, onPackagesAvailable) arrives as
+        // OP_UPDATE; both can add entries to AllAppsList. AllAppsToWorkspace.enqueue is idempotent
+        // and a no-op unless no-drawer mode is enabled, so this is safe on every such update.
+        if (mOp == OP_ADD || mOp == OP_UPDATE) {
+            AllAppsToWorkspace.enqueue(app);
         }
     }
 

@@ -28,12 +28,13 @@ import app.lawnchair.data.iconoverride.IconOverrideRepository
 import app.lawnchair.nexuslauncher.OverlayCallbackImpl
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
+import app.lawnchair.preferences.ResetPreferences
+import app.lawnchair.preferences.SettingsCategory
 import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.theme.color.ColorMode
 import app.lawnchair.ui.preferences.LocalIsExpandedScreen
 import app.lawnchair.ui.preferences.components.FeedPreference
 import app.lawnchair.ui.preferences.components.GestureHandlerPreference
-import app.lawnchair.ui.preferences.components.HomeLayoutSettings
 import app.lawnchair.ui.preferences.components.NavigationActionPreference
 import app.lawnchair.ui.preferences.components.OverlayHandlerPreference
 import app.lawnchair.ui.preferences.components.controls.ClickablePreference
@@ -44,6 +45,7 @@ import app.lawnchair.ui.preferences.components.layout.ExpandAndShrink
 import app.lawnchair.ui.preferences.components.layout.PreferenceGroup
 import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
 import app.lawnchair.ui.preferences.navigation.HomeScreenGrid
+import app.lawnchair.ui.preferences.navigation.HomeScreenHiddenApps
 import app.lawnchair.util.collectAsStateBlocking
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.R
@@ -68,25 +70,9 @@ fun HomeScreenPreferences(
         modifier = modifier,
     ) {
         val lockHomeScreenAdapter = prefs2.lockHomeScreen.getAdapter()
-        val showDeckLayout = prefs2.showDeckLayout.getAdapter().state.value
         val context = LocalContext.current
 
-        if (showDeckLayout) {
-            HomeLayoutSettings()
-        }
-
         PreferenceGroup(heading = stringResource(id = R.string.general_label)) {
-            val addIconToHomeAdapter = prefs.addIconToHome.getAdapter()
-            val isDeckLayoutAdapter = prefs2.deckLayout.getAdapter()
-            ExpandAndShrink(visible = !isDeckLayoutAdapter.state.value) {
-                SwitchPreference(
-                    checked = (!lockHomeScreenAdapter.state.value && addIconToHomeAdapter.state.value) || isDeckLayoutAdapter.state.value,
-                    onCheckedChange = addIconToHomeAdapter::onChange,
-                    label = stringResource(id = R.string.auto_add_shortcuts_label),
-                    description = if (lockHomeScreenAdapter.state.value) stringResource(id = R.string.home_screen_locked) else null,
-                    enabled = lockHomeScreenAdapter.state.value.not(),
-                )
-            }
             GestureHandlerPreference(
                 adapter = prefs2.doubleTapGestureHandler.getAdapter(),
                 label = stringResource(id = R.string.gesture_double_tap),
@@ -96,6 +82,21 @@ fun HomeScreenPreferences(
                 label = stringResource(id = R.string.infinite_scrolling_label),
                 description = stringResource(id = R.string.infinite_scrolling_description),
             )
+            val classicDragAdapter = prefs2.classicDragMode.getAdapter()
+            SwitchPreference(
+                adapter = classicDragAdapter,
+                label = stringResource(id = R.string.classic_drag_mode_label),
+                description = stringResource(id = R.string.classic_drag_mode_description),
+            )
+            ExpandAndShrink(visible = classicDragAdapter.state.value) {
+                SliderPreference(
+                    label = stringResource(id = R.string.classic_drag_edge_label),
+                    adapter = prefs2.classicDragEdgeFraction.getAdapter(),
+                    step = 0.01f,
+                    valueRange = 0.05F..0.30F,
+                    showAsPercentage = true,
+                )
+            }
         }
         PreferenceGroup(heading = stringResource(id = R.string.home_screen_actions)) {
             ClickablePreference(
@@ -144,6 +145,8 @@ fun HomeScreenPreferences(
                 adapter = prefs2.showTopShadow.getAdapter(),
                 label = stringResource(id = R.string.show_sys_ui_scrim),
             )
+            // Moved out of the former "Experimental features" screen.
+            WallpaperBlurPreference()
         }
         PreferenceGroup(heading = stringResource(id = R.string.layout)) {
             val columns by prefs.workspaceColumns.getAdapter()
@@ -152,6 +155,13 @@ fun HomeScreenPreferences(
                 label = stringResource(id = R.string.home_screen_grid),
                 destination = HomeScreenGrid,
                 subtitle = stringResource(id = R.string.x_by_y, columns, rows),
+            )
+            // No-drawer mode: pick the apps the flatten pass keeps off the home screen.
+            val hiddenHomeApps = prefs2.hiddenHomeApps.getAdapter().state.value
+            NavigationActionPreference(
+                label = stringResource(id = R.string.hide_apps_from_home_screen_label),
+                destination = HomeScreenHiddenApps,
+                subtitle = LocalContext.current.resources.getQuantityString(R.plurals.apps_count, hiddenHomeApps.size, hiddenHomeApps.size),
             )
             SwitchPreference(
                 adapter = lockHomeScreenAdapter,
@@ -163,6 +173,12 @@ fun HomeScreenPreferences(
                 label = stringResource(id = R.string.show_dot_pagination_label),
                 description = stringResource(id = R.string.show_dot_pagination_description),
             )
+            // Moved out of the former "Experimental features" screen.
+            SwitchPreference(
+                adapter = prefs.workspaceIncreaseMaxGridSize.getAdapter(),
+                label = stringResource(id = R.string.workspace_increase_max_grid_size_label),
+                description = stringResource(id = R.string.workspace_increase_max_grid_size_description),
+            )
         }
         PreferenceGroup(heading = stringResource(id = R.string.popup_menu)) {
             SwitchPreference(
@@ -171,6 +187,7 @@ fun HomeScreenPreferences(
                 description = stringResource(id = R.string.show_material_u_popup_description),
             )
             LauncherPopupPreferenceItem()
+            IconMenuPopupPreferenceItem()
         }
         PreferenceGroup(heading = stringResource(id = R.string.status_bar_label)) {
             val showStatusBarAdapter = prefs2.showStatusBar.getAdapter()
@@ -199,6 +216,7 @@ fun HomeScreenPreferences(
                 step = 0.1f,
                 valueRange = 0.5F..1.5F,
                 showAsPercentage = true,
+                percentOffset = -20,
             )
             val homeScreenLabelsAdapter = prefs2.showIconLabelsOnHomeScreen.getAdapter()
             SwitchPreference(
@@ -212,6 +230,7 @@ fun HomeScreenPreferences(
                     step = 0.1f,
                     valueRange = 0.5F..1.5F,
                     showAsPercentage = true,
+                    percentOffset = 10,
                 )
             }
         }
@@ -244,6 +263,15 @@ fun HomeScreenPreferences(
                 adapter = prefs2.forceWidgetResize.getAdapter(),
                 label = stringResource(id = R.string.force_widget_resize_label),
                 description = stringResource(id = R.string.force_widget_resize_description),
+            )
+        }
+        PreferenceGroup {
+            ClickablePreference(
+                label = stringResource(id = R.string.reset_category_label),
+                confirmationText = stringResource(id = R.string.reset_category_confirmation),
+                onClick = {
+                    scope.launch { ResetPreferences.resetCategory(context, SettingsCategory.HomeScreen) }
+                },
             )
         }
     }

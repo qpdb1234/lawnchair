@@ -12,12 +12,15 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import app.lawnchair.preferences.PreferenceAdapter
+import app.lawnchair.preferences.ResetPreferences
+import app.lawnchair.preferences.SettingsCategory
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.smartspace.SmartspaceViewContainer
@@ -41,6 +44,7 @@ import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
 import app.lawnchair.ui.theme.isSelectedThemeDark
 import com.android.launcher3.R
 import com.kieronquinn.app.smartspacer.sdk.SmartspacerConstants
+import kotlinx.coroutines.launch
 
 @Composable
 fun SmartspacePreferences(
@@ -49,6 +53,8 @@ fun SmartspacePreferences(
 ) {
     val preferenceManager2 = preferenceManager2()
     val smartspaceProvider = SmartspaceProvider.INSTANCE.get(LocalContext.current)
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val smartspaceAdapter = preferenceManager2.enableSmartspace.getAdapter()
     val smartspaceModeAdapter = preferenceManager2.smartspaceMode.getAdapter()
     val selectedMode = smartspaceModeAdapter.state.value
@@ -88,6 +94,16 @@ fun SmartspacePreferences(
 
                         else -> {}
                     }
+                }
+            }
+        }
+        if (!fromWidget) {
+            PreferenceGroup {
+                ClickablePreference(
+                    label = stringResource(id = R.string.reset_category_label),
+                    confirmationText = stringResource(id = R.string.reset_category_confirmation),
+                ) {
+                    scope.launch { ResetPreferences.resetCategory(context, SettingsCategory.Smartspace) }
                 }
             }
         }
@@ -212,6 +228,12 @@ fun SmartspaceDateAndTimePreferences(
                     adapter = showDateAdapter,
                     label = stringResource(id = R.string.smartspace_date),
                     enabled = if (showDateAdapter.state.value) !calendarHasMinimumContent else true,
+                )
+                // Moved out of the former "Experimental features" screen.
+                SwitchPreference(
+                    adapter = calendarSelectionAdapter,
+                    label = stringResource(id = R.string.smartspace_calendar_label),
+                    description = stringResource(id = R.string.smartspace_calendar_description),
                 )
                 val calendarSelectionEnabled =
                     preferenceManager2.enableSmartspaceCalendarSelection.getAdapter()

@@ -1,1 +1,1 @@
-Homescreen based on on Launcher3 from AOSP
+Lawnchair 15 fork: drive your home screen with AI via 9 control channels

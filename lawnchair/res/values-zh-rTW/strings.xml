@@ -135,6 +135,16 @@
     <string name="settings">設定</string>
     <string name="general_label">一般</string>
     <string name="general_description">色彩、圖示套件、通知圓點</string>
+    <!-- Log collection & export -->
+    <string name="log_collection_category">日誌</string>
+    <string name="log_collection_category_description">收集詳細的執行日誌以協助排查問題</string>
+    <string name="enable_log_collection_label">開啟日誌收集</string>
+    <string name="enable_log_collection_description">持續將完整的系統日誌、啟動器事件與當機記錄寫入裝置儲存，直至關閉</string>
+    <string name="export_logs_label">匯出日誌</string>
+    <string name="export_logs_description">將裝置資訊、近期日誌歷史與當機記錄打包成檔案，儲存至下載目錄並可分享</string>
+    <string name="log_export_success">日誌已匯出至下載目錄</string>
+    <string name="log_export_failed">日誌匯出失敗</string>
+    <string name="log_export_no_app">沒有可用於分享日誌的應用程式</string>
     <string name="home_screen_label">主畫面</string>
     <string name="home_screen_description">來源、網格、圖示</string>
     <string name="home_screen_actions">Home screen actions</string>
@@ -706,4 +716,66 @@
     <string name="grant_requested_permissions_tap">輕觸以賦予權限</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Home screen cleared</string>
+    <string name="show_dot_pagination_label">顯示圓點分頁</string>
+    <string name="show_dot_pagination_description">用圓點而非線條來顯示頁碼</string>
+    <string name="show_material_u_popup_label">使用新的彈出樣式</string>
+    <string name="show_material_u_popup_description">採用 Material You 的回彈、且略微整合的彈出樣式</string>
+    <string name="edit_icon_menu_items">編輯圖示選單</string>
+    <string name="icon_menu_editor">圖示選單</string>
+    <string name="icon_menu_editor_description">選擇應用程式長按時顯示的選單項目及其順序。</string>
+    <string name="icon_menu_items">選單項目</string>
+    <string name="icon_menu_deep_label">應用程式捷徑</string>
+    <string name="language_title">啟動器語言</string>
+    <string name="language_system_default">跟隨系統語言</string>
+    <string name="no_drawer_title">移除應用程式抽屜</string>
+    <string name="no_drawer_description">以桌面圖示的形式顯示所有應用程式，而不再單獨使用應用程式抽屜。新安裝的應用程式會自動加到下一個空位。</string>
+    <string name="folder_add_button_desc">新增應用程式</string>
+    <string name="folder_add_dialog_title">新增應用程式</string>
+    <string name="folder_add_ok">確定</string>
+    <string name="folder_add_cancel">取消</string>
+    <string name="folder_add_empty">沒有可新增的應用程式</string>
+    <string name="restore_nova_backup">還原 Nova 備份</string>
+    <string name="invalid_nova_backup_file">無效的 Nova 備份檔案</string>
+    <string name="nova_grid_label">網格</string>
+    <string name="nova_dock_label">停靠列</string>
+    <string name="nova_app_label">應用程式</string>
+    <string name="nova_widget_label">小工具</string>
+    <string name="nova_folder_label">資料夾</string>
+    <string name="nova_shortcut_label">捷徑</string>
+    <string name="nova_icon_pack_label">圖示套件</string>
+    <string name="restore_nova_subgrid_warning">此備份使用了 Nova 的子網格定位。Lawnchair 不支援子網格，因此放在子網格中的項目會被對齊到最近的網格位置。</string>
+    <string name="restore_nova_smartspace_conflict_toggle">額外增加一列以顯示「一瞥」資訊</string>
+    <string name="dt2s_recents_warning_open_settings">開啟設定</string>
+    <string name="dt2s_a11y_hint">要使用「雙擊熄屏」，請開啟 Lawnchair 無障礙服務。點按「開啟設定」，選取「Lawnchair」，並開啟「使用 Lawnchair」。\n\nLawnchair 透過無障礙的 performGlobalAction 方法來執行該操作。這是一項敏感權限，允許監視其他應用程式。但 Lawnchair 並未針對該功能進行設定，也不會接收任何事件。</string>
+    <string name="recents_a11y_hint">要使用「開啟最近應用程式」，請開啟 Lawnchair 無障礙服務。點按「開啟設定」，選取「Lawnchair」，並開啟「使用 Lawnchair」。\n\nLawnchair 透過無障礙的 performGlobalAction 方法來執行該操作。這是一項敏感權限，允許監視其他應用程式。但 Lawnchair 並未針對該功能進行設定，也不會接收任何事件。</string>
+    <string name="adb_shortcut_host_label">啟動器控制</string>
+    <string name="adb_sc_list_short">列出圖示</string>
+    <string name="adb_sc_list_long">將桌面寫入 logcat</string>
+    <string name="adb_sc_reload_short">重新載入桌面</string>
+    <string name="adb_sc_reload_long">從其資料庫重新讀取桌面</string>
+    <string name="adb_sc_disabled">請在本設定中開啟通道 9</string>
+    <string name="ai_control_category_title">AI 存取通道</string>
+    <string name="adb_control_title">1. 靜態廣播（am broadcast）</string>
+    <string name="adb_activity_title">2. 無介面活動（am start）</string>
+    <string name="adb_service_title">3. 短生命週期服務（am start-service）</string>
+    <string name="adb_provider_title">4. 內容提供者（content call）</string>
+    <string name="adb_link_title">5. 深層連結（VIEW intent）</string>
+    <string name="adb_batch_title">6. 結構化行（content insert / bulkInsert）</string>
+    <string name="adb_http_title">7. 本機 HTTP 伺服器（REST，127.0.0.1:9091）</string>
+    <string name="adb_mcp_title">8. MCP 伺服器（JSON-RPC 2.0，POST /mcp）</string>
+    <string name="adb_shortcut_title">9. 捷徑（長按「控制」圖示）</string>
+    <string name="ai_direct_db_title">完全不改動啟動器：直接編輯 launcher.db（root / Shizuku）</string>
+    <string name="ai_cache_freeze_title">待機零耗的由來：快取應用程式凍結器</string>
+    <string name="ai_control_category_summary">九種方式讓外部工具（一個 AI、一個 MCP 用戶端、一個腳本、adb shell）或你本人來操控桌面。閒置時牠們全都零成本：前四種在收到呼叫之前不會建立任何元件，深層連結是一個只在呼叫期間存在的活動，接下來的兩種共享一個僅在其開關開啟時才存在的迴環執行緒，最後一種則是在其開關開啟之前連圖示都不存在。每個通道都理解同樣的命令——list_icons、move_icon、add_icon、remove_icon，以及自 v111 起的 reload——並把結果記錄到 adb logcat -s AdbControl；HTTP 與 MCP 通道還會把結果回傳給呼叫者。所有開關預設關閉。通道 1 到 4 以及 6 受 DUMP 權限保護，因此只有 adb shell 或 root 能觸及牠們；深層連結（5）、本機伺服器（7 和 8）以及捷徑（9）則刻意不受保護，因為正是這一點讓牠們無需 adb 也可使用——請把那些開關當作一種安全取捨。</string>
+    <string name="adb_control_summary">最輕量的通道，自 v107 起提供。範例：adb shell am broadcast -n com.lawnchair.launcher/com.android.launcher3.AdbControlReceiver --es cmd list_icons。不使用時零成本：接收器物件隨每次廣播而建立，並緊接其後被丟棄。</string>
+    <string name="adb_activity_summary">透過一個沒有使用者介面的活動執行同樣的命令：adb shell am start -n com.lawnchair.launcher/com.android.launcher3.AdbControlActivity --es cmd list_icons。它使用 Theme.NoDisplay，因此從不繪製任何視窗，命令一完成就自行結束，並且不會進入最近應用程式。不使用時零成本；每次呼叫比廣播略重，因為會建立一個工作。適合偏好 am start 或需要活動返回結果的呼叫者。</string>
+    <string name="adb_service_summary">透過一個會自行停止的服務執行同樣的命令：adb shell am start-service -n com.lawnchair.launcher/com.android.launcher3.AdbControlService --es cmd list_icons。不使用時零成本。較慢或批次處理的工作更適合用它，因為服務不受廣播那 10 秒時間窗的限制，而 START_NOT_STICKY 確保之後沒有任何東西繼續執行。</string>
+    <string name="adb_provider_summary">透過 content://com.lawnchair.launcher.aicontrol 執行同樣的命令：adb shell content call --uri content://com.lawnchair.launcher.aicontrol --method list_icons。當你的工具本就使用 content URI 時很方便，而且它會等待命令完成，使呼叫者能取回一個 Bundle。權衡：與上面三個通道不同，系統會在啟動器程序啟動時具現化一個提供者，因此存在一個空物件帶來的極小固定開銷——onCreate() 完全不做任何工作，一切都在需要時才發生。</string>
+    <string name="adb_link_summary">把同樣的命令放進一個 URL 來攜帶，因此呼叫者既不需要 adb 也不需要 DUMP 權限：adb shell am start -a android.intent.action.VIEW -d「launcher://control?cmd=move_icon&amp;package_name=com.foo&amp;target_cellX=0&amp;target_cellY=1」，手機上的任何應用程式（Termux、Tasker、網頁）都能發送同一個 Uri。不使用時零成本，因為活動只在一次呼叫執行期間存在。權衡：此開關開啟時，裝置上的每個應用程式都可能重排你的桌面，這正是它預設關閉、並且每次呼叫都會連同發起它的包名一起記錄到 adb logcat -s AdbControl 的原因。</string>
+    <string name="adb_batch_summary">與通道 4 使用同一個 authority，但它接收的是行而非方法名，因此多個操作可在一次往返中完成：adb shell content insert --uri content://com.lawnchair.launcher.aicontrol --bind cmd:s:move_icon --bind package_name:s:com.foo --bind target_cellX:i:0 --bind target_cellY:i:1。應用程式端的 ContentProviderClient.bulkInsert() 可以一次交出一整個清單；每一行都按給定順序在啟動器主執行緒上套用，而 bulkInsert() 會返回實際執行的行數。它沒有自身開銷：不增加元件，該開關只是控制這兩個寫入方法。</string>
+    <string name="adb_http_summary">面向完全沒有 adb 的呼叫者：啟動器在 127.0.0.1:9091 上提供純文字，因此 Termux、Tasker 或其他應用程式可以請求 http://127.0.0.1:9091/cmd?cmd=move_icon&amp;package_name=com.foo&amp;target_cellX=0&amp;target_cellY=1，並從同一應答中讀取結果——GET /list、GET /state?pkg=com.foo、GET /cmd?.. 以及 GET /help。從電腦端使用 adb forward tcp:9091 tcp:9091。與上面的通道不同，結果是在應答本身中返回給呼叫者，而不只是留在 adb logcat 裡，而這正是一個 AI 所需要的。啟用時的閒置成本是一個等待連線的執行緒，沒有輪詢；停用時則完全不繫結任何東西。只服務於迴環位址，因此網路上無法存取到任何東西。撥動開關會立即啟動或停止它，重開機後再次開啟此畫面即可讓它恢復。</string>
+    <string name="adb_mcp_summary">同一個監聽器，改用 AI 用戶端已經會說的同一種方言：向 http://127.0.0.1:9091/mcp 以 POST 傳送 initialize、tools/list 和 tools/call。工作區命令作為帶參數的工具提供，自 v111 起還包括無需參數的 reload，每次呼叫返回一段文字加上一個 isError 旗標。沒有工作階段狀態、沒有取樣、也沒有資源，因為一個呼叫工具的用戶端不需要更多東西——因此它在通道 7 之上不增加任何執行緒或成本。把 Claude Desktop 或任意 MCP SDK 指向被轉傳的埠，或在裝置上的橋接中指向 http://127.0.0.1:9091/mcp。</string>
+    <string name="adb_shortcut_summary">完全不依賴任何呼叫者的命令：此項開啟時，啟動器會把兩個普通的 Android 捷徑——list_icons 和 reload——發布為一個「啟動器控制」圖示（元件名稱為 LauncherControl）的長按項目，你可以把它放在桌面的任意位置，點按該圖示會開啟這些設定。這是某個自動化流程或語音助理無需 adb、無需權限、無需埠就能觸發的通道，並且關閉時零成本——它所屬的圖示在當時是一個被停用的元件，因此套件管理器甚至不知道它存在。開啟開關會把該圖示加入應用程式清單，關閉則再次移除。只有這兩個無需參數的命令以這種方式提供；move_icon、add_icon 和 remove_icon 需要一個套件和一個儲存格，所以对它們請使用通道 5 或 7。</string>
+    <string name="ai_direct_db_summary">無需任何開關。有了 root 或 Shizuku，一個工具可以直接更新 favorites 表，例如 adb shell sqlite3 /data/data/com.lawnchair.launcher/databases/launcher.db「UPDATE favorites SET cellX=0, cellY=1 WHERE _id=17」，然後透過任一已啟用的通道發送 reload 命令——離你手指最近的是通道 9 的捷徑——以讓啟動器重新讀取該表。啟動器完全不知道這次改動，所以它的執行期成本為零；代價是你需要 root 或 Shizuku，並且畫面只在 reload 之後才更新。</string>
+    <string name="ai_cache_freeze_summary">無需任何開關，Android 11 及更高版本會自行完成：一旦啟動器進入快取狀態，它的程序就會被凍結——完全不佔 CPU，只佔記憶體——而一次廣播、am start 或 content 呼叫都會立刻喚醒它。因此，除非你真正使用，否則把上面的通道保持關閉是最省的設定。</string>
 </resources>

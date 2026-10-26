@@ -3,15 +3,24 @@ package app.lawnchair.ui.preferences.destinations
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.LauncherApps
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lawnchair.data.iconoverride.IconOverrideRepository
+import app.lawnchair.icons.CustomIconImporter
 import app.lawnchair.icons.IconPickerItem
 import app.lawnchair.ui.preferences.LocalNavController
 import app.lawnchair.ui.preferences.LocalPreferenceInteractor
@@ -43,7 +52,8 @@ fun SelectIconPreference(componentKey: ComponentKey) {
     val model = launcherAppState.model
 
     val repo = IconOverrideRepository.INSTANCE.get(context)
-    OnResult<IconPickerItem> { item ->
+
+    val applyOverride: (IconPickerItem) -> Unit = { item ->
         scope.launch {
             repo.setOverride(componentKey, item)
             (context as Activity).let {
@@ -53,6 +63,30 @@ fun SelectIconPreference(componentKey: ComponentKey) {
                 launcherAppState.reloadIcons()
             }
         }
+    }
+
+    OnResult<IconPickerItem> { item -> applyOverride(item) }
+
+    var importFailed by remember { mutableStateOf(false) }
+    if (importFailed) {
+        LaunchedEffect(Unit) {
+            Toast.makeText(context, R.string.custom_icon_import_failed, Toast.LENGTH_SHORT).show()
+            importFailed = false
+        }
+    }
+
+    fun importAndApply(uri: Uri) {
+        scope.launch {
+            val item = CustomIconImporter.importImage(context, uri)
+            if (item != null) applyOverride(item) else importFailed = true
+        }
+    }
+
+    val photoLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        uri?.let { importAndApply(it) }
+    }
+    val fileLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let { importAndApply(it) }
     }
 
     val overrideItem by repo.observeTarget(componentKey).collectAsStateWithLifecycle(initialValue = null)
@@ -93,6 +127,29 @@ fun SelectIconPreference(componentKey: ComponentKey) {
                     }
                 },
             )
+        }
+        preferenceGroupItems(
+            2,
+            isFirstChild = false,
+            heading = { stringResource(id = R.string.custom_icon_heading) },
+        ) { index ->
+            if (index == 0) {
+                ClickablePreference(
+                    label = stringResource(id = R.string.pick_custom_icon_photos),
+                    onClick = {
+                        photoLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+                        )
+                    },
+                )
+            } else {
+                ClickablePreference(
+                    label = stringResource(id = R.string.pick_custom_icon_files),
+                    onClick = {
+                        fileLauncher.launch(arrayOf("image/*"))
+                    },
+                )
+            }
         }
     }
 }

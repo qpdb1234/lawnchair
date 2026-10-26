@@ -34,6 +34,9 @@ import com.android.app.animation.Interpolators;
 import com.android.launcher3.dragndrop.DragController;
 import com.android.launcher3.dragndrop.DragController.DragListener;
 import com.android.launcher3.dragndrop.DragOptions;
+import com.patrykmichalik.opto.core.PreferenceExtensionsKt;
+
+import app.lawnchair.preferences2.PreferenceManager2;
 
 /*
  * The top bar containing various drop targets: Delete/App Info/Uninstall.
@@ -325,6 +328,14 @@ public class DropTargetBar extends FrameLayout
      */
     @Override
     public void onDragStart(DropTarget.DragObject dragObject, DragOptions options) {
+        // Classic drag mode keeps the top Cancel/Uninstall bar hidden; removal is done through the
+        // long-press icon menu instead. The bar starts hidden and getDropTargets() returns empty
+        // while hidden, so not showing it here does not affect drop handling.
+        boolean classicDragMode = PreferenceExtensionsKt.firstBlocking(
+                PreferenceManager2.getInstance(getContext()).getClassicDragMode());
+        if (classicDragMode) {
+            return;
+        }
         animateToVisibility(true);
     }
 

@@ -63,9 +63,6 @@ data object Smartspace : PreferenceRootRoute
 data object About : PreferenceRootRoute
 
 @Serializable
-data object ExperimentalFeatures : PreferenceRootRoute
-
-@Serializable
 data object DebugMenu : PreferenceRootRoute
 
 @Serializable
@@ -84,12 +81,23 @@ data object GeneralIconShape : PreferenceRoute
 @Serializable
 data object GeneralCustomIconShapeCreator : PreferenceRoute
 
+// Mod port: AI access channels sub-screen, opened from General.
+@Serializable
+data object GeneralAiControl : PreferenceRoute
+
 // Home Screen section routes
 @Serializable
 data object HomeScreenGrid : PreferenceRoute
 
+// Mod port: pick the apps the no-drawer flatten pass keeps off the home screen.
+@Serializable
+data object HomeScreenHiddenApps : PreferenceRoute
+
 @Serializable
 data object HomeScreenPopupEditor : PreferenceRoute
+
+@Serializable
+data object HomeScreenIconMenuEditor : PreferenceRoute
 
 // Dock section routes
 @Serializable
@@ -116,10 +124,6 @@ data object SmartspaceWidget : PreferenceRoute
 // Gestures section routes
 @Serializable
 data object GesturesPickApp : PreferenceRoute
-
-// About section routes
-@Serializable
-data object AboutLicenses : PreferenceRoute
 
 // Data/Action oriented routes (might be used across sections or are specific actions)
 // These are intentionally not prefixed as per your instruction,

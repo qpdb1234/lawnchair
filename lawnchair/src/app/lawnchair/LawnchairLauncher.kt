@@ -61,6 +61,7 @@ import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherState
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
+import com.android.launcher3.model.AllAppsToWorkspace
 import com.android.launcher3.model.data.ItemInfo
 import com.android.launcher3.popup.SystemShortcut
 import com.android.launcher3.shortcuts.DeepShortcutView
@@ -89,6 +90,7 @@ import com.patrykmichalik.opto.core.onEach
 import dev.kdrag0n.monet.theme.ColorScheme
 import java.util.stream.Stream
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -144,6 +146,22 @@ class LawnchairLauncher : QuickstepLauncher() {
                 }
             }
         }
+    }
+
+    // No-drawer mode: refuse any transition into the app drawer and snap straight back to the
+    // workspace. Registered only while noDrawer is on. The post() avoids re-entering the state
+    // machine while it is dispatching this very transition, and catches every entry point
+    // (system gesture, PortraitStatesTouchController, intents, accessibility) in one place.
+    private val noDrawerStateListener = object : StateManager.StateListener<LauncherState> {
+        override fun onStateTransitionStart(toState: LauncherState) {
+            if (toState is AllAppsState) {
+                Executors.MAIN_EXECUTOR.post {
+                    launcher.stateManager.goToState(LauncherState.NORMAL, false /* animated */)
+                }
+            }
+        }
+
+        override fun onStateTransitionComplete(finalState: LauncherState) {}
     }
 
     private lateinit var colorScheme: ColorScheme
@@ -213,6 +231,17 @@ class LawnchairLauncher : QuickstepLauncher() {
                     addStateListener(rememberPositionStateListener)
                 } else {
                     removeStateListener(rememberPositionStateListener)
+                }
+            }
+        }.launchIn(scope = lifecycleScope)
+
+        preferenceManager2.noDrawer.get().distinctUntilChanged().onEach { enabled ->
+            Companion.noDrawerEnabled = enabled
+            with(launcher.stateManager) {
+                if (enabled) {
+                    addStateListener(noDrawerStateListener)
+                } else {
+                    removeStateListener(noDrawerStateListener)
                 }
             }
         }.launchIn(scope = lifecycleScope)
@@ -475,6 +504,18 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun getDefaultOverlay(): LauncherOverlayManager = defaultOverlay
 
+    override fun bindComplete(workspaceItemCount: Int, isBindSync: Boolean) {
+        super.bindComplete(workspaceItemCount, isBindSync)
+        // The model is fully loaded once binding completes, so this is the safe point to flatten
+        // the drawer onto the workspace. enqueue() is itself guarded by isModelLoaded() and the
+        // pass is idempotent, so repeated binds only add genuinely new apps.
+        lifecycleScope.launch {
+            if (preferenceManager2.noDrawer.get().first()) {
+                AllAppsToWorkspace.enqueue(LauncherAppState.getInstance(this@LawnchairLauncher))
+            }
+        }
+    }
+
     fun recreateIfNotScheduled() {
         if (sRestartFlags == 0) {
             recreate()
@@ -508,6 +549,11 @@ class LawnchairLauncher : QuickstepLauncher() {
         private const val FLAG_RESTART = 1 shl 1
 
         var sRestartFlags = 0
+
+        // Mirrors the noDrawer preference so non-launcher call sites (e.g. animateToAllApps) can
+        // cheaply refuse to open the app drawer while no-drawer mode is active.
+        @Volatile
+        var noDrawerEnabled = false
 
         val instance get() = LauncherAppState.getInstanceNoCreate()?.launcher as? LawnchairLauncher
     }

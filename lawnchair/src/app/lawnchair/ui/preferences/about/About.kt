@@ -16,96 +16,44 @@
 
 package app.lawnchair.ui.preferences.about
 
-import android.content.Intent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import app.lawnchair.ui.preferences.LocalIsExpandedScreen
-import app.lawnchair.ui.preferences.components.NavigationActionPreference
-import app.lawnchair.ui.preferences.components.controls.ClickablePreference
-import app.lawnchair.ui.preferences.components.layout.PreferenceDivider
-import app.lawnchair.ui.preferences.components.layout.PreferenceGroupHeading
-import app.lawnchair.ui.preferences.components.layout.PreferenceGroupItem
 import app.lawnchair.ui.preferences.components.layout.PreferenceLayoutLazyColumn
-import app.lawnchair.ui.preferences.components.layout.preferenceGroupItems
-import app.lawnchair.ui.preferences.navigation.AboutLicenses
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.R
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun About(
     modifier: Modifier = Modifier,
-    viewModel: AboutViewModel = viewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-
-    val sheetState = rememberModalBottomSheetState(true)
-    var openBottomSheet by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-
-    if (openBottomSheet) {
-        val updateState = uiState.updateState
-        if (updateState is UpdateState.Available) {
-            ChangesDialog(
-                changelogState = updateState.changelogState,
-                onDismiss = {
-                    scope.launch {
-                        sheetState.hide()
-                    }.invokeOnCompletion {
-                        openBottomSheet = false
-                    }
-                },
-                onDownload = {
-                    viewModel.downloadUpdate()
-                },
-                sheetState = sheetState,
-            )
-        }
-    }
-
     PreferenceLayoutLazyColumn(
         label = stringResource(id = R.string.about_label),
         modifier = modifier,
         backArrowVisible = !LocalIsExpandedScreen.current,
     ) {
         item {
-            Spacer(Modifier.padding(top = 8.dp))
+            Spacer(Modifier.padding(top = 24.dp))
         }
         item {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
                 Image(
@@ -129,131 +77,33 @@ fun About(
             )
         }
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = BuildConfig.VERSION_DISPLAY_NAME,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .combinedClickable(
-                            onClick = {},
-                            onLongClick = {
-                                val commitUrl =
-                                    "https://github.com/LawnchairLauncher/lawnchair/commit/${BuildConfig.COMMIT_HASH}"
-                                context.startActivity(Intent(Intent.ACTION_VIEW, commitUrl.toUri()))
-                            },
-                        ),
-                )
-            }
+            Spacer(modifier = Modifier.height(4.dp))
         }
         item {
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        item {
-            UpdateSection(
-                updateState = uiState.updateState,
-                onInstall = {
-                    viewModel.installUpdate(it)
-                },
-                onViewChanges = {
-                    openBottomSheet = true
-                    scope.launch {
-                        sheetState.show()
-                    }
-                },
+            Text(
+                text = BuildConfig.VERSION_DISPLAY_NAME,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
         item {
-            Spacer(modifier = Modifier.requiredHeight(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
         }
         item {
-            Row(
+            Text(
+                text = stringResource(id = R.string.about_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-            ) {
-                uiState.topLinks.forEach { link ->
-                    LawnchairLink(
-                        iconResId = link.iconResId,
-                        label = stringResource(id = link.labelResId),
-                        modifier = Modifier.weight(weight = 1f),
-                        url = link.url,
-                    )
-                }
-            }
-        }
-        preferenceGroupItems(
-            items = uiState.coreTeam,
-            key = { _, it -> it.name },
-            isFirstChild = false,
-            heading = { stringResource(id = R.string.product) },
-        ) { _, it ->
-            ContributorRow(
-                member = it,
-            )
-        }
-        preferenceGroupItems(
-            items = uiState.supportAndPr,
-            key = { _, it -> it.name },
-            isFirstChild = false,
-            heading = { stringResource(id = R.string.support_and_pr) },
-        ) { _, it ->
-            ContributorRow(
-                member = it,
-            )
-        }
-        preferenceGroupItems(
-            items = uiState.bottomLinks,
-            key = { _, it -> it.labelResId },
-            isFirstChild = false,
-            heading = { stringResource(id = R.string.community) },
-        ) { _, it ->
-            HorizontalLawnchairLink(
-                iconResId = it.iconResId,
-                label = stringResource(id = it.labelResId),
-                url = it.url,
+                    .padding(horizontal = 32.dp),
             )
         }
         item {
-            PreferenceGroupHeading(
-                stringResource(R.string.legal),
-            )
-        }
-        item {
-            PreferenceGroupItem(
-                cutTop = false,
-                cutBottom = true,
-            ) {
-                NavigationActionPreference(
-                    label = stringResource(id = R.string.acknowledgements),
-                    destination = AboutLicenses,
-                )
-            }
-        }
-        item {
-            PreferenceGroupItem(
-                cutTop = true,
-                cutBottom = true,
-            ) {
-                PreferenceDivider()
-                ClickablePreference(
-                    label = stringResource(id = R.string.privacy_policy),
-                    onClick = {
-                        val webpage = PRIVACY_POLICY.toUri()
-                        val intent = Intent(Intent.ACTION_VIEW, webpage)
-                        if (intent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(intent)
-                        }
-                    },
-                )
-            }
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
-
-private const val PRIVACY_POLICY = "https://lawnchair.app/privacy_policy"

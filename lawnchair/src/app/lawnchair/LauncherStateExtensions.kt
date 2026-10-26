@@ -10,6 +10,8 @@ import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 suspend fun Launcher.animateToAllApps() {
+    // No-drawer mode: QSB taps and "open app drawer" gestures must not reveal the drawer.
+    if (LawnchairLauncher.noDrawerEnabled) return
     suspendCancellableCoroutine { cont ->
         val duration = LauncherState.ALL_APPS.getTransitionDuration(this, true).toLong()
         val config = StateAnimationConfig()

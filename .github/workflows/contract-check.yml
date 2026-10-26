@@ -1,0 +1,43 @@
+# Fast, dependency-free gate for the AI control contract.
+#
+# Where ai-control-smoke.yml boots an emulator and can be slow or flaky, this job only greps the
+# checked-in source to confirm the wire contract the clients depend on is still intact, and lints
+# the two helper scripts. It needs no adb, no emulator and no JDK - just bash + grep - so it runs in
+# seconds and is safe to make a required check on pull requests.
+name: contract-check
+
+on:
+  push:
+    paths:
+      - 'src/com/android/launcher3/AdbControlHttpServer.java'
+      - 'src/com/android/launcher3/AdbControlMcp.java'
+      - 'src/com/android/launcher3/AdbControlMcpJson.java'
+      - 'scripts/**'
+      - '.github/workflows/contract-check.yml'
+  pull_request:
+    paths:
+      - 'src/com/android/launcher3/AdbControlHttpServer.java'
+      - 'src/com/android/launcher3/AdbControlMcp.java'
+      - 'src/com/android/launcher3/AdbControlMcpJson.java'
+      - 'scripts/**'
+      - '.github/workflows/contract-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint helper scripts
+        run: |
+          bash -n scripts/static_contract_check.sh
+          bash -n scripts/verify_mcp.sh
+          echo "shell syntax OK"
+
+      - name: Static contract check
+        run: bash scripts/static_contract_check.sh

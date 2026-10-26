@@ -3,10 +3,8 @@ package com.android.launcher3.folder;
 public class ClippedFolderIconLayoutRule {
 
     public static final int MAX_NUM_ITEMS_IN_PREVIEW = 4;
-    private static final int MIN_NUM_ITEMS_IN_PREVIEW = 2;
 
     private static final float MIN_SCALE = 0.44f;
-    private static final float MAX_SCALE = 0.51f;
     private static final float MAX_RADIUS_DILATION = 0.25f;
     // The max amount of overlap the preview items can go outside of the background bounds.
     public static final float ICON_OVERLAP_FACTOR = 1 + (MAX_RADIUS_DILATION / 2f);
@@ -112,9 +110,39 @@ public class ClippedFolderIconLayoutRule {
             index = 3;
         }
 
-        // We bump the radius up between 0 and MAX_RADIUS_DILATION % as the number of items increase
-        float radius = mRadius * (1 + MAX_RADIUS_DILATION * (curNumItems -
-                MIN_NUM_ITEMS_IN_PREVIEW) / (MAX_NUM_ITEMS_IN_PREVIEW - MIN_NUM_ITEMS_IN_PREVIEW));
+        // Orbit radius per layout. The preview icons are drawn fairly small (see scaleForItem),
+        // so the orbit has to be tuned for each count:
+        //  - 2 items sit on a horizontal pair. Using the full radius pushes them to the far
+        //    edges of the background and leaves a large empty gap in the middle, so the orbit is
+        //    shrunk to bring the two icons together.
+        //  - 3 items form an upward triangle; the orbit is pulled in slightly so the base stays
+        //    clear of the side edges.
+        //  - 4 items keep the original (largest) orbit, which already fits and centers nicely.
+        float radiusFactor;
+        if (curNumItems == 2) {
+            radiusFactor = 0.82f;
+        } else if (curNumItems == 3) {
+            radiusFactor = 1.0f;
+        } else {
+            radiusFactor = 1 + MAX_RADIUS_DILATION; // 1.25 for the 4 item case
+        }
+        float radius = mRadius * radiusFactor;
+
+        // An upward triangle is not optically centered even though its centroid is: its bounding
+        // box sits above the preview center, so the 3 icons read as too high with a gap at the
+        // bottom. Compute the vertical bounding box of all the item centers and shift the whole
+        // set down so it is centered inside the preview. Symmetric layouts (2 and 4 items) get a
+        // zero offset, so only the 3 item case actually moves.
+        float minCy = Float.MAX_VALUE;
+        float maxCy = -Float.MAX_VALUE;
+        for (int i = 0; i < curNumItems; i++) {
+            double ti = theta0 + i * (2 * Math.PI / curNumItems) * direction;
+            float cy = (float) (-radius * Math.sin(ti) / 2);
+            minCy = Math.min(minCy, cy);
+            maxCy = Math.max(maxCy, cy);
+        }
+        float verticalCenterOffset = -(minCy + maxCy) / 2f;
+
         double theta = theta0 + index * (2 * Math.PI / curNumItems) * direction;
 
         float halfIconSize = (mIconSize * scaleForItem(curNumItems)) / 2;
@@ -123,19 +151,17 @@ public class ClippedFolderIconLayoutRule {
         // of the icon, and to be based from the top / left of the preview area. The y component
         // is inverted to match the coordinate system.
         result[0] = mAvailableSpace / 2 + (float) (radius * Math.cos(theta) / 2) - halfIconSize;
-        result[1] = mAvailableSpace / 2 + (float) (- radius * Math.sin(theta) / 2) - halfIconSize;
+        result[1] = mAvailableSpace / 2 + (float) (- radius * Math.sin(theta) / 2)
+                + verticalCenterOffset - halfIconSize;
 
     }
 
     public float scaleForItem(int numItems) {
-        // Scale is determined by the number of items in the preview.
-        final float scale;
-        if (numItems <= 3) {
-            scale = MAX_SCALE;
-        } else {
-            scale = MIN_SCALE;
-        }
-        return scale * mBaselineIconScale;
+        // The preview icons are not clipped in their resting state, so a scale that is too large
+        // makes a 2 or 3 item folder poke past the folder background. Only the 4 item layout
+        // (MIN_SCALE) reliably fits, so use that same scale for every count. This keeps a folder
+        // with 2 or 3 icons visually consistent with, and as contained as, one with 4 icons.
+        return MIN_SCALE * mBaselineIconScale;
     }
 
     public float getIconSize() {

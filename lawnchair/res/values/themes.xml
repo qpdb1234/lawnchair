@@ -7,6 +7,10 @@
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
     </style>
 
+    <!-- Settings theme: identical to Theme.Lawnchair, except values-v31 strips the Android 12+
+         system splash screen (开屏画面) from the settings activity. -->
+    <style name="Theme.Lawnchair.Settings" parent="Theme.Lawnchair" />
+
     <style name="Base.Theme.Lawnchair" parent="Base.Theme.MaterialThemeBuilder">
         <item name="android:colorBackground">@color/white_50</item>
     </style>

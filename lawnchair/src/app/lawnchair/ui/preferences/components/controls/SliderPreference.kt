@@ -83,6 +83,7 @@ fun SliderPreference(
     modifier: Modifier = Modifier,
     showAsPercentage: Boolean = false,
     showUnit: String = "",
+    percentOffset: Int = 0,
 ) {
     var adapterValue by adapter
 
@@ -97,6 +98,7 @@ fun SliderPreference(
         modifier = modifier,
         showAsPercentage = showAsPercentage,
         showUnit = showUnit,
+        percentOffset = percentOffset,
     )
 }
 
@@ -110,6 +112,7 @@ private fun SliderPreference(
     modifier: Modifier = Modifier,
     showAsPercentage: Boolean = false,
     showUnit: String = "",
+    percentOffset: Int = 0,
 ) {
     var sliderValue by remember { mutableFloatStateOf(value) }
 
@@ -143,7 +146,7 @@ private fun SliderPreference(
                         text = if (showAsPercentage) {
                             stringResource(
                                 id = R.string.n_percent,
-                                (value * 100).roundToInt(),
+                                (value * 100).roundToInt() + percentOffset,
                             ) + " $showUnit"
                         } else {
                             value.roundToInt().toString() + " $showUnit"

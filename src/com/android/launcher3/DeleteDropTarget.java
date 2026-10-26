@@ -31,17 +31,12 @@ import com.android.launcher3.model.data.CollectionInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
-import com.patrykmichalik.opto.core.PreferenceExtensionsKt;
-
-import app.lawnchair.preferences2.PreferenceManager2;
 
 public class DeleteDropTarget extends ButtonDropTarget {
 
     private final StatsLogManager mStatsLogManager;
 
     private StatsLogManager.LauncherEvent mLauncherEvent;
-
-    private final PreferenceManager2 pref2;
 
     public DeleteDropTarget(Context context) {
         this(context, null, 0);
@@ -54,13 +49,14 @@ public class DeleteDropTarget extends ButtonDropTarget {
     public DeleteDropTarget(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.mStatsLogManager = StatsLogManager.newInstance(context);
-        pref2 = PreferenceManager2.getInstance(context);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        setDrawable(R.drawable.ic_remove_no_shadow);
+        // This target now only cancels the drag, so show a close/cross icon instead of the
+        // trash/remove icon.
+        setDrawable(R.drawable.ic_gm_close_24);
     }
 
     @Override
@@ -68,6 +64,13 @@ public class DeleteDropTarget extends ButtonDropTarget {
         super.onDragStart(dragObject, options);
         setTextBasedOnDragSource(dragObject.dragInfo);
         setControlTypeBasedOnDragSource(dragObject.dragInfo);
+        // supportsDrop() returns false (so the drag is cancelled rather than removed), which
+        // would make the base class hide this button. Keep it visible so the user can release
+        // onto it to cancel the long-press/drag operation.
+        if (!options.isKeyboardDrag) {
+            mActive = true;
+            setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -94,30 +97,24 @@ public class DeleteDropTarget extends ButtonDropTarget {
 
     @Override
     protected boolean supportsDrop(ItemInfo info) {
-        return true;
+        // Never accept the drop: releasing on this target cancels the drag and the icon springs
+        // back to its original position instead of being removed.
+        return false;
     }
 
     /**
-     * Set the drop target's text to either "Remove" or "Cancel" depending on the drag item.
+     * The drop target always acts as a "Cancel" button that aborts the current drag.
      */
     private void setTextBasedOnDragSource(ItemInfo item) {
         if (!TextUtils.isEmpty(mText)) {
-            mText = getResources().getString(canRemove(item)
-                    ? R.string.remove_drop_target_label
-                    : android.R.string.cancel);
+            mText = getResources().getString(android.R.string.cancel);
             setContentDescription(mText);
             requestLayout();
         }
     }
 
-    private boolean isCanDrop(ItemInfo item){
-        return !(item.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
-                item.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER);
-    }
-
     private boolean canRemove(ItemInfo item) {
-        boolean isDeckLayoutFirst = PreferenceExtensionsKt.firstBlocking(pref2.getDeckLayout());
-        return isDeckLayoutFirst ? isCanDrop(item) : item.id != ItemInfo.NO_ID;
+        return item.id != ItemInfo.NO_ID;
     }
 
     /**
@@ -156,8 +153,6 @@ public class DeleteDropTarget extends ButtonDropTarget {
         // because we already remove the drag view from the folder (if the drag originated from
         // a folder) in Folder.beginDrag()
         CharSequence announcement = getContext().getString(R.string.item_removed);
-        if (!PreferenceExtensionsKt.firstBlocking(pref2.getDeckLayout())) {
-            mDropTargetHandler.onAccessibilityDelete(view, item, announcement);
-        }
+        mDropTargetHandler.onAccessibilityDelete(view, item, announcement);
     }
 }

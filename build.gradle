@@ -146,7 +146,7 @@ final def isReleaseBuild = ciBuild && ciRef.contains("beta")
 final def devReleaseName = ciBuild ? "Dev.(#${ciRunNumber})" : "Dev.(${buildCommit})"
 final def version = "15"
 final def releaseName = "Beta 3"
-final def versionDisplayName = "${version}.${isReleaseBuild ? releaseName : devReleaseName}"
+final def versionDisplayName = "15.0.0"
 final def majorVersion = versionDisplayName.split("\\.")[0]
 
 final def quickstepMinSdk = "29"
@@ -243,8 +243,7 @@ android {
         }
 
         debug {
-            applicationIdSuffix ".debug"
-            resValue("string", "derived_app_name", "Lawnchair (Debug)")
+            resValue("string", "derived_app_name", "Lawnchair")
         }
 
         release {
@@ -278,7 +277,7 @@ android {
         }
 
         github {
-            applicationId 'app.lawnchair'
+            applicationId 'com.lawnchair.launcher'
             dimension "channel"
         }
 

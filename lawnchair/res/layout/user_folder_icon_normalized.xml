@@ -63,6 +63,19 @@
             android:elevation="1dp"
             />
 
+        <ImageView
+            android:id="@+id/folder_add_button"
+            android:layout_width="@dimen/folder_footer_height_default"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="@string/folder_add_button_desc"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_folder_add" />
+
     </LinearLayout>
 
 </com.android.launcher3.folder.Folder>

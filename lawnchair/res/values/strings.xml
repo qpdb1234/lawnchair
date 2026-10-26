@@ -143,7 +143,11 @@
     <string name="my_folder_label">My folder</string>
 
     <!-- A11y description -->
-    <string name="accessibility_service_description">To perform certain actions (such as locking your phone) when performing a gesture, Lawnchair requires accessibility access.\n\nLawnchair doesn\'t watch any user action, though the privilege to do so is required for all accessibility services. Lawnchair discards any event sent by the system.\n\nIn order to lock your phone, or to open the Recents screen, Lawnchair uses the performGlobalAction Accessibility service.</string>
+    <string name="accessibility_service_description">To perform certain actions (such as locking your phone) when performing a gesture, Lawnchair requires accessibility access.
+
+Lawnchair doesn\'t watch any user action, though the privilege to do so is required for all accessibility services. Lawnchair discards any event sent by the system.
+
+In order to lock your phone, or to open the Recents screen, Lawnchair uses the performGlobalAction Accessibility service.</string>
 
     <string name="iconPackPackageDefault" translatable="false">""</string>
 
@@ -170,6 +174,17 @@
     <string name="general_label">General</string>
     <string name="general_description">Colors, icon packs, notification dots</string>
 
+    <!-- Log collection & export -->
+    <string name="log_collection_category">Logging</string>
+    <string name="log_collection_category_description">Collect detailed runtime logs to help diagnose issues</string>
+    <string name="enable_log_collection_label">Enable log collection</string>
+    <string name="enable_log_collection_description">Continuously records the full system log, launcher events and crashes to device storage until disabled</string>
+    <string name="export_logs_label">Export logs</string>
+    <string name="export_logs_description">Bundle device info, recent log history and crashes into a file saved to Downloads and ready to share</string>
+    <string name="log_export_success">Logs exported to Downloads</string>
+    <string name="log_export_failed">Failed to export logs</string>
+    <string name="log_export_no_app">No app available to share the logs</string>
+
     <string name="home_screen_label">Home screen</string>
     <string name="home_screen_description">Feed, grid, icons</string>
 
@@ -194,6 +209,7 @@
     <string name="quickstep_description">Clear All button, corner radius</string>
 
     <string name="about_label">About</string>
+    <string name="about_description" translatable="false">本应用是基于 Lawnchair 深度定制的第三方桌面启动器。它提供无抽屉的平铺桌面，并拥有丰富的个性化选项：图标包、图标形状、图标与标签大小，以及从相册或文件中选取任意图片作为自定义应用图标。你还可以自定义桌面网格、隐藏应用、文件夹外观与颜色、长按菜单与弹出菜单，配置手势启动应用、Dock 搜索与资讯面板（At a Glance），并支持桌面布局的备份与恢复（含从 Nova 启动器迁移）。此外，内置的 AI 控制通道允许通过 ADB 以编程方式批量管理桌面。</string>
 
     <string name="app_info_drop_target_label">App info</string>
     <string name="debug_restart_launcher">Restart Lawnchair</string>
@@ -214,9 +230,6 @@
 
     <string name="icon_swipe_gestures">Icon swipe gestures</string>
     <string name="icon_swipe_gestures_description">Perform actions when swiping left or right on icons instead of moving the home screen</string>
-
-    <string name="show_deck_layout">Deck layout</string>
-    <string name="show_deck_layout_description">Show a layout option to hide the app drawer and automatically add new apps to the home screen</string>
 
     <string name="gesturenavcontract_label">Use GestureNavContract API</string>
     <string name="gesturenavcontract_description">Support Android\'s enhanced animations when using gesture navigation. Not all devices support this. May cause animation bugs when in use.</string>
@@ -284,6 +297,13 @@
     <string name="pick_icon_from_label">Pick icon from</string>
     <string name="icon_picker_load_failed">Couldn\'t load more icons</string>
 
+    <!-- Custom image icons (picked from gallery / files / other apps) -->
+    <string name="custom_icons_label">Custom images</string>
+    <string name="custom_icon_heading">Custom image</string>
+    <string name="pick_custom_icon_photos">Choose from photos</string>
+    <string name="pick_custom_icon_files">Choose from files</string>
+    <string name="custom_icon_import_failed">Couldn\'t load that image</string>
+
     <!-- Icon shapes  -->
     <string name="icon_shape_system">System</string>
     <string name="icon_shape_circle">Circle</string>
@@ -339,7 +359,7 @@
 
     <string name="pref_fonts_missing_font">Font not found</string>
 
-    <string name="font_label">Font (experimental)</string>
+    <string name="font_label">Font</string>
     <string name="fontWorkspace">General</string>
     <string name="fontHeading">Headings</string>
     <string name="fontHeadingMedium">Headings (medium)</string>
@@ -595,15 +615,12 @@
     <string name="home_screen_rotation_label">Home screen rotation</string>
     <string name="home_screen_rotation_description">Allow home screen rotation when device is rotated</string>
 
-    <string name="wallpaper_blur">Blur wallpaper (experimental)</string>
+    <string name="wallpaper_blur">Blur wallpaper</string>
     <string name="wallpaper_background_blur">Blur intensity</string>
     <string name="wallpaper_background_blur_factor">Factor threshold</string>
 
-    <string name="home_lawn_deck_label">Deck</string>
-    <string name="home_lawn_deck_label_beta">Deck (Beta)</string>
-    <string name="home_lawn_deck_description">Effortlessly access your applications with Deck, the ultimate drawerless experience designed for simplicity and seamless organization</string>
-
     <string name="auto_add_shortcuts_label">Add new apps to home screen</string>
+    <string name="auto_add_shortcuts_description">Automatically place newly installed app icons on an empty spot on the home screen</string>
 
     <string name="minus_one_enable">Show feed</string>
     <string name="minus_one_unavailable">No feed apps installed</string>
@@ -617,6 +634,15 @@
 
     <string name="infinite_scrolling_label">Infinite scrolling</string>
     <string name="infinite_scrolling_description">Swipe to loop between the first and last pages</string>
+
+    <string name="classic_drag_mode_label">Classic drag mode</string>
+    <string name="classic_drag_mode_description">Drag without zooming or the top bar; drag to the screen edge to change page.</string>
+    <string name="classic_drag_edge_label">Edge trigger range</string>
+
+    <string name="reset_category_label">Reset this section to defaults</string>
+    <string name="reset_category_confirmation">The settings in this section will be restored to their defaults and the launcher will restart. Your home screen layout, hidden apps, icon pack and per-app overrides are kept. Do you want to continue?</string>
+    <string name="reset_all_label">Reset all settings to defaults</string>
+    <string name="reset_all_confirmation">Every setting will be restored to its default and the launcher will restart. Your home screen layout, hidden apps, icon pack and per-app overrides are kept. Do you want to continue?</string>
 
     <string name="home_screen_grid">Home screen grid</string>
     <string name="home_screen_lock">Lock home screen</string>
@@ -689,6 +715,17 @@
     <string name="paused_apps_dialog_message">%1$s was directly paused from the launcher</string>
     <string name="paused_apps_drop_target_label">Pause app</string>
 
+    <!-- Icon long-press menu editor -->
+    <string name="edit_icon_menu_items">Edit icon menu</string>
+    <string name="icon_menu_editor">Icon menu</string>
+    <string name="icon_menu_editor_description">Choose which rows the long-press menu of an app shows, and in which order.</string>
+    <string name="icon_menu_items">Menu items</string>
+    <string name="icon_menu_deep_label">App shortcuts</string>
+
+    <!-- Per-app language -->
+    <string name="language_title">Launcher language</string>
+    <string name="language_system_default">Follow the system language</string>
+
     <string name="dock_icons">Dock icons</string>
     <string name="hotseat_bottom_space_label">Bottom padding</string>
     <string name="page_indicator_height">Page indicator height</string>
@@ -730,6 +767,18 @@
     <!-- App drawer settings -->
     <string name="hidden_apps_label">Hidden apps</string>
 
+    <!-- No-drawer mode -->
+    <string name="no_drawer_title">Remove app drawer</string>
+    <string name="no_drawer_description">Show every app as an icon on the home screen instead of in a separate app drawer. Newly installed apps are added to the next free spot automatically.</string>
+
+    <!-- App drawer enable toggle (top of App drawer settings) -->
+    <string name="enable_app_drawer_title">Enable app drawer</string>
+    <string name="enable_app_drawer_description">Show apps in a separate app drawer. When off, every app is shown as an icon on the home screen instead and the settings below are hidden.</string>
+
+    <!-- Hide from home screen (no-drawer mode, Home screen settings) -->
+    <string name="hide_apps_from_home_screen_label">Hide apps from home screen</string>
+    <string name="hidden_home_apps_label_with_count">Hidden apps (%1$d)</string>
+
     <string name="pref_all_apps_bulk_icon_loading_title">Load apps in bulk</string>
     <string name="pref_all_apps_bulk_icon_loading_description">Load and display icons in bulk instead of individually</string>
 
@@ -744,7 +793,6 @@
     <string name="app_drawer_bg_color_label">Background color</string>
 
     <!-- HiddenAppsPreferences -->
-    <string name="hide_from_drawer">Hide from app drawer</string>
     <string name="hidden_apps_label_with_count">Hidden apps (%1$d)</string>
     <plurals name="apps_count">
         <item quantity="one">%1$d app</item>
@@ -758,6 +806,13 @@
 
     <string name="max_folder_columns">Maximum folder columns</string>
     <string name="max_folder_rows">Maximum folder rows</string>
+
+    <!-- Folder add-apps dialog -->
+    <string name="folder_add_button_desc">Add apps</string>
+    <string name="folder_add_dialog_title">Add apps</string>
+    <string name="folder_add_ok">OK</string>
+    <string name="folder_add_cancel">Cancel</string>
+    <string name="folder_add_empty">No apps to add</string>
 
     <!-- Quickstep settings -->
     <string name="quickswitch_ignored_warning">These settings will be ignored as Lawnchair isn\'t set as the Recents screen provider</string>
@@ -921,4 +976,36 @@
     <string name="grant_requested_permissions_tap">Tap to grant permissions</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Home screen cleared</string>
+
+    <!-- ==== Mod: AI access channels ==== -->
+    <string name="ai_control_category_title">AI access channels</string>
+    <string name="ai_control_category_summary">Nine ways for an external tool (an AI, an MCP client, a script, adb shell) or your own finger to drive the home screen. All of them cost nothing while idle: the first four create no component until a call arrives, the deep link is an activity that exists only during a call, the next two share one loopback thread that exists only while their switch is on, and the last one adds an icon that is not even present until its switch is turned on. Every channel understands the same commands - list_icons, move_icon, add_icon, remove_icon and, since v111, reload - and logs its result to adb logcat -s AdbControl; the HTTP and MCP channels also hand the result back to the caller. All switches default to off. Channels 1 to 4 and 6 are protected by the DUMP permission, so only adb shell or root can reach them; the deep link (5), the local server (7 and 8) and the shortcuts (9) deliberately are not, because that is what makes them usable without adb - treat those switches as a security choice.</string>
+    <string name="adb_control_title">1. Static broadcast (am broadcast)</string>
+    <string name="adb_control_summary">Lightest channel, available since v107. Example: adb shell am broadcast -n com.lawnchair.launcher/com.android.launcher3.AdbControlReceiver --es cmd list_icons. Zero cost when unused: the receiver object is created per broadcast and thrown away right after it.</string>
+    <string name="adb_activity_title">2. Headless activity (am start)</string>
+    <string name="adb_activity_summary">Same commands through an activity without a user interface: adb shell am start -n com.lawnchair.launcher/com.android.launcher3.AdbControlActivity --es cmd list_icons. It uses Theme.NoDisplay so no window is ever drawn, finishes itself as soon as the command is done and stays out of Recents. Zero cost when unused; per call it is slightly heavier than a broadcast because a task is created. Useful for tools that prefer am start or want an activity result.</string>
+    <string name="adb_service_title">3. Short-lived service (am start-service)</string>
+    <string name="adb_service_summary">Same commands through a service that stops itself: adb shell am start-service -n com.lawnchair.launcher/com.android.launcher3.AdbControlService --es cmd list_icons. Zero cost when unused. Prefer it for slower or batched work, since a service is not limited to the 10 second broadcast window, and START_NOT_STICKY makes sure nothing keeps running afterwards.</string>
+    <string name="adb_provider_title">4. Content provider (content call)</string>
+    <string name="adb_provider_summary">Same commands through content://com.lawnchair.launcher.aicontrol: adb shell content call --uri content://com.lawnchair.launcher.aicontrol --method list_icons. Handy when your tool already speaks content URIs, and it waits for the command so the caller gets a Bundle back. Trade-off: unlike the three channels above, the system instantiates a provider when the launcher process starts, so there is a tiny constant cost of one empty object - onCreate() does no work at all and everything happens on demand.</string>
+    <string name="adb_link_title">5. Deep link (VIEW intent)</string>
+    <string name="adb_link_summary">The same commands carried in a URL, so the caller needs neither adb nor the DUMP permission: adb shell am start -a android.intent.action.VIEW -d \"launcher://control?cmd=move_icon&amp;package_name=com.foo&amp;target_cellX=0&amp;target_cellY=1\", and any app on the phone (Termux, Tasker, a web page) can send that same Uri. Zero cost when unused, since an activity only exists while a call is running. Trade-off: while this switch is on, every app on the device may rearrange your desktop, which is why it defaults to off and why every call is logged with the package that made it to adb logcat -s AdbControl.</string>
+    <string name="adb_batch_title">6. Structured rows (content insert / bulkInsert)</string>
+    <string name="adb_batch_summary">The same authority as channel 4, but it takes rows instead of a method name, so several operations travel in one round trip: adb shell content insert --uri content://com.lawnchair.launcher.aicontrol --bind cmd:s:move_icon --bind package_name:s:com.foo --bind target_cellX:i:0 --bind target_cellY:i:1. An app-side ContentProviderClient.bulkInsert() may hand over a whole list; each row is applied on the launcher main thread in the order given, and bulkInsert() returns how many rows actually ran. No cost of its own: no extra component, the switch merely gates the two write methods.</string>
+    <string name="adb_http_title">7. Local HTTP server (REST on 127.0.0.1:9091)</string>
+    <string name="adb_http_summary">For a caller that has no adb at all: the launcher serves plain text on 127.0.0.1:9091, so Termux, Tasker or another app can request http://127.0.0.1:9091/cmd?cmd=move_icon&amp;package_name=com.foo&amp;target_cellX=0&amp;target_cellY=1 and read the outcome from the same answer - GET /list, GET /state?pkg=com.foo, GET /cmd?.. and GET /help. From a PC use adb forward tcp:9091 tcp:9091. Unlike the channels above the result is returned to the caller in the answer itself and not only left in adb logcat, which is what an AI needs. Idle cost while enabled is one thread waiting for a connection, with no polling; while disabled nothing is bound at all. Only the loopback address is served, so nothing is reachable from the network. Moving the switch starts or stops it at once, and opening this screen again brings it back after a reboot.</string>
+    <string name="adb_mcp_title">8. MCP server (JSON-RPC 2.0 on POST /mcp)</string>
+    <string name="adb_mcp_summary">The same listener in the dialect an AI client already speaks: POST to http://127.0.0.1:9091/mcp with initialize, tools/list and tools/call. The workspace commands are offered as tools with their parameters, since v111 the param-free reload included, and each call answers one piece of text plus an isError flag. No session state, no sampling and no resources, because a tool-calling client needs nothing more - so this adds no thread and no cost on top of channel 7. Point Claude Desktop or any MCP SDK at the forwarded port, or at http://127.0.0.1:9091/mcp from an on-device bridge.</string>
+    <string name="adb_shortcut_title">9. Shortcuts (long-press the control icon)</string>
+    <string name="adb_shortcut_summary">The commands without any caller at all: while this is on, the launcher publishes two ordinary Android shortcuts, list_icons and reload, as long-press entries of a Launcher control icon (the component LauncherControl) that you can place anywhere on the desktop, and tapping the icon opens these settings. This is the channel an automation or a voice assistant can fire without adb, a permission or a port, and it costs nothing while off - the icon it belongs to is a disabled component then, so the package manager does not even know it exists. Turning the switch on adds that icon to the app list and off removes it again. Only the two commands that need no arguments are offered this way; move_icon, add_icon and remove_icon need a package and a cell, so use channel 5 or 7 for them.</string>
+    <string name="adb_shortcut_host_label">Launcher control</string>
+    <string name="adb_sc_list_short">List icons</string>
+    <string name="adb_sc_list_long">Write the desktop to logcat</string>
+    <string name="adb_sc_reload_short">Reload desktop</string>
+    <string name="adb_sc_reload_long">Re-read the desktop from its database</string>
+    <string name="adb_sc_disabled">Turn on channel 9 in these settings</string>
+    <string name="ai_direct_db_title">No launcher change at all: edit launcher.db (root / Shizuku)</string>
+    <string name="ai_direct_db_summary">No switch needed. With root or Shizuku a tool can update the favorites table directly, for example adb shell sqlite3 /data/data/com.lawnchair.launcher/databases/launcher.db \"UPDATE favorites SET cellX=0, cellY=1 WHERE _id=17\", and then send the reload command over any enabled channel - the shortcut of channel 9 is the closest one to your finger - to make the launcher re-read the table. The launcher never learns about the edit, so its runtime cost is zero; the price is that you need root or Shizuku and the screen only updates after a reload.</string>
+    <string name="ai_cache_freeze_title">Free standby savings: cached app freezer</string>
+    <string name="ai_cache_freeze_summary">No switch needed, Android 11 and newer do this on their own: once the launcher moves to the cached state its process is frozen - no CPU at all, memory only - and a broadcast, am start or content call wakes it instantly. Keeping the channels above switched off unless you actually use them is therefore the cheapest setup.</string>
 </resources>

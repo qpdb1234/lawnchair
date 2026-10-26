@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AI entry point #9 - static (manifest) shortcuts, the ninth switch in the settings screen.
+
+     The platform only reads a file like this for a component that carries
+     MAIN + LAUNCHER, which is why the manifest adds the "LauncherControl"
+     activity-alias the meta-data below hangs on. While the switch is off that alias
+     is disabled, so this file is never even parsed: no icon, no long-press menu, no
+     shortcut record anywhere.
+
+     Long-press the control icon and pick an entry - the system then fires the intent
+     below at AdbControlShortcutActivity, which hands it to the same command runner
+     every other channel uses. The command travels in the action: handleCommand()
+     already turns "com.android.launcher3.adb.LIST_ICONS" into "list_icons", the same
+     way the broadcast actions work.
+
+     android:targetPackage is left out on purpose: the ShortcutManager then resolves the
+     intent against the app's own package, so the same file works for every build variant
+     (debug / nightly / play) without hardcoding an applicationId.
+
+     Only the two param-free commands are offered. move_icon / add_icon / remove_icon
+     need a package and a cell, and a static shortcut cannot take arguments at
+     trigger time - use the deep link or the local HTTP channel for those.
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="list_icons"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher_home"
+        android:shortcutShortLabel="@string/adb_sc_list_short"
+        android:shortcutLongLabel="@string/adb_sc_list_long"
+        android:shortcutDisabledMessage="@string/adb_sc_disabled">
+        <intent
+            android:action="com.android.launcher3.adb.LIST_ICONS"
+            android:targetClass="com.android.launcher3.AdbControlShortcutActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="reload"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher_home"
+        android:shortcutShortLabel="@string/adb_sc_reload_short"
+        android:shortcutLongLabel="@string/adb_sc_reload_long"
+        android:shortcutDisabledMessage="@string/adb_sc_disabled">
+        <intent
+            android:action="com.android.launcher3.adb.RELOAD"
+            android:targetClass="com.android.launcher3.AdbControlShortcutActivity" />
+    </shortcut>
+</shortcuts>

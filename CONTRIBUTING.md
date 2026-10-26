@@ -1,4 +1,4 @@
-# Lawnchair contributing guidelines
+# Contributing guidelines (AI Control Fork)
 
 <picture>
     <!-- Avoid image being clickable with slight workaround --->
@@ -6,8 +6,14 @@
     <img alt="" src="docs/assets/lawnchair-round.webp" width="100">
 </picture>
 
-Welcome to the **Lawnchair** project. We appreciate your interest in contributing. For questions,
-feel free to reach out on [Telegram][telegram] or [Discord][discord].
+> [!NOTE]
+> This repository is a personal **fork** of Lawnchair that adds an AI control interface and a set of
+> launcher tweaks. Issues and pull requests here are about the fork's own changes. For the base
+> project, please contribute upstream on the
+> [Lawnchair main repository](https://github.com/LawnchairLauncher/lawnchair).
+
+Welcome, and thanks for your interest in contributing. For questions about the fork, open an
+issue on this repository.
 
 ## No-code contributions
 
@@ -35,7 +41,7 @@ For translations, please visit **[Lawnchair on Crowdin][crowdin]**.
 1. Clone the repository with the `--recursive` flag to include the project's
    submodules.
    ```bash
-   git clone --recursive https://github.com/LawnchairLauncher/lawnchair.git
+   git clone --recursive https://github.com/qpdb1234/lawnchair.git
    ```
 2. Open the project in Android Studio.
 3. Select the `lawnWithQuickstepGithubDebug` build variant.
@@ -45,8 +51,8 @@ If you encounter errors with the `iconloaderlib` or `searchuilib` modules, run
 
 Here are some contribution tips to help you get started:
 
-- Always make sure that you're up-to-date with **Lawnchair** by setting your base branch to
-  `15-dev`.
+- Always make sure that you're up-to-date with this fork by setting your base branch to
+  `lawnchair-enhancements`.
 - Make sure your code is logical and well-formatted. If using Kotlin,
   see [“Coding conventions” in the Kotlin documentation][kotlin-coding-conventions];
 - [The `lawnchair` package][lawnchair-package]
@@ -69,7 +75,8 @@ Here are some contribution tips to help you get started:
 ### Development workflow
 
 We use a tiered workflow to balance development speed with stability. The process for merging a
-change depends on its complexity and risk. All PRs should target the `15-dev` branch.
+change depends on its complexity and risk. All PRs in this fork should target the
+`lawnchair-enhancements` branch.
 
 | Tier                        | Definition                                                                                | Examples                                                                                | Protocol                                                                                                                                                                                                  |
 |-----------------------------|-------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

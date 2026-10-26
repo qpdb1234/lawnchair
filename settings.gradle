@@ -46,6 +46,9 @@ dependencyResolutionManagement {
 enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+// Directory is named "lawnchair-15.0.0-beta3.0" (dots break type-safe project accessors); pin a valid name.
+rootProject.name = 'Lawnchair'
+
 include ':iconloaderlib'
 project(':iconloaderlib').projectDir = new File(rootDir, 'platform_frameworks_libs_systemui/iconloaderlib')
 

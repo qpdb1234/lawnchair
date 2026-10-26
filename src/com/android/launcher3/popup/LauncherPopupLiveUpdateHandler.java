@@ -45,6 +45,12 @@ public class LauncherPopupLiveUpdateHandler extends PopupLiveUpdateHandler<Launc
 
     @Override
     public void onWidgetsBound() {
+        // The Widgets row also arrives here on its own once
+        // the model has looked up the app's widgets. A row the user switched off must stay away, so
+        // the whole update is skipped for it rather than just the addition.
+        if (app.lawnchair.ui.popup.IconMenuPopup.isEntryHidden(mContext, "Widgets")) {
+            return;
+        }
         BubbleTextView originalIcon = mPopupContainerWithArrow.getOriginalIcon();
         SystemShortcut widgetInfo = SystemShortcut.WIDGETS.getShortcut(mContext,
                 (ItemInfo) originalIcon.getTag(), originalIcon);

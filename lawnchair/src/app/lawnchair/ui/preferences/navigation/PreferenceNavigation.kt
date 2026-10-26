@@ -18,29 +18,30 @@ import app.lawnchair.preferences.BasePreferenceManager
 import app.lawnchair.preferences.preferenceManager
 import app.lawnchair.ui.preferences.LocalIsExpandedScreen
 import app.lawnchair.ui.preferences.about.About
-import app.lawnchair.ui.preferences.about.acknowledgements.Acknowledgements
 import app.lawnchair.ui.preferences.components.colorpreference.ColorPreferenceModelList
 import app.lawnchair.ui.preferences.components.colorpreference.ColorSelection
 import app.lawnchair.ui.preferences.components.search.SearchProviderPreferenceScreen
 import app.lawnchair.ui.preferences.destinations.AppDrawerFoldersPreference
 import app.lawnchair.ui.preferences.destinations.AppDrawerPreferences
+import app.lawnchair.ui.preferences.destinations.AiControlPreferences
 import app.lawnchair.ui.preferences.destinations.CustomIconShapePreference
 import app.lawnchair.ui.preferences.destinations.DebugMenuPreferences
 import app.lawnchair.ui.preferences.destinations.DockPreferences
 import app.lawnchair.ui.preferences.destinations.DummyPreference
-import app.lawnchair.ui.preferences.destinations.ExperimentalFeaturesPreferences
 import app.lawnchair.ui.preferences.destinations.FeatureFlagsPreference
 import app.lawnchair.ui.preferences.destinations.FolderPreferences
 import app.lawnchair.ui.preferences.destinations.FontSelection
 import app.lawnchair.ui.preferences.destinations.GeneralPreferences
 import app.lawnchair.ui.preferences.destinations.GesturePreferences
 import app.lawnchair.ui.preferences.destinations.HiddenAppsPreferences
+import app.lawnchair.ui.preferences.destinations.HiddenHomeAppsPreferences
 import app.lawnchair.ui.preferences.destinations.HomeScreenGridPreferences
 import app.lawnchair.ui.preferences.destinations.HomeScreenPreferences
 import app.lawnchair.ui.preferences.destinations.IconPackPreferences
 import app.lawnchair.ui.preferences.destinations.IconPickerPreference
 import app.lawnchair.ui.preferences.destinations.IconShapePreference
 import app.lawnchair.ui.preferences.destinations.LauncherPopupPreference
+import app.lawnchair.ui.preferences.destinations.IconMenuPopupPreference
 import app.lawnchair.ui.preferences.destinations.PickAppForGesture
 import app.lawnchair.ui.preferences.destinations.PreferencesDashboard
 import app.lawnchair.ui.preferences.destinations.QuickstepPreferences
@@ -104,10 +105,13 @@ fun PreferenceNavigation(
         composable<GeneralIconPack> { IconPackPreferences() }
         composable<GeneralIconShape> { IconShapePreference() }
         composable<GeneralCustomIconShapeCreator> { CustomIconShapePreference() }
+        composable<GeneralAiControl> { AiControlPreferences() }
 
         composable<HomeScreen> { HomeScreenPreferences() }
         composable<HomeScreenGrid> { HomeScreenGridPreferences() }
+        composable<HomeScreenHiddenApps> { HiddenHomeAppsPreferences() }
         composable<HomeScreenPopupEditor> { LauncherPopupPreference() }
+        composable<HomeScreenIconMenuEditor> { IconMenuPopupPreference() }
 
         composable<Dock> { DockPreferences() }
         composable<DockSearchProvider> { SearchProviderPreferences() }
@@ -141,7 +145,6 @@ fun PreferenceNavigation(
         composable<Quickstep> { QuickstepPreferences() }
 
         composable<About> { About() }
-        composable<AboutLicenses> { Acknowledgements() }
 
         composable<DebugMenu> { DebugMenuPreferences() }
         composable<FeatureFlags> { FeatureFlagsPreference() }
@@ -157,7 +160,6 @@ fun PreferenceNavigation(
             IconPickerPreference(packageName = args.packageName)
         }
 
-        composable<ExperimentalFeatures> { ExperimentalFeaturesPreferences() }
         composable<ColorSelection> { backStackEntry ->
             val screen: ColorSelection = backStackEntry.toRoute()
             val modelList = ColorPreferenceModelList.INSTANCE.get(LocalContext.current)

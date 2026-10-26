@@ -19,13 +19,17 @@ package app.lawnchair.ui.preferences.destinations
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lawnchair.preferences.PreferenceAdapter
+import app.lawnchair.preferences.ResetPreferences
+import app.lawnchair.preferences.SettingsCategory
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
+import app.lawnchair.log.LogExporter
 import app.lawnchair.preferences2.asState
 import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.theme.color.ColorOption
@@ -39,6 +43,7 @@ import app.lawnchair.ui.preferences.components.ThemePreference
 import app.lawnchair.ui.preferences.components.colorpreference.ColorContrastWarning
 import app.lawnchair.ui.preferences.components.colorpreference.ColorPreference
 import app.lawnchair.ui.preferences.components.controls.ListPreference
+import app.lawnchair.ui.preferences.components.controls.ClickablePreference
 import app.lawnchair.ui.preferences.components.controls.ListPreferenceEntry
 import app.lawnchair.ui.preferences.components.controls.SliderPreference
 import app.lawnchair.ui.preferences.components.controls.SwitchPreference
@@ -49,16 +54,19 @@ import app.lawnchair.ui.preferences.components.layout.PreferenceGroup
 import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
 import app.lawnchair.ui.preferences.components.notificationDotsEnabled
 import app.lawnchair.ui.preferences.components.notificationServiceEnabled
+import app.lawnchair.ui.preferences.navigation.GeneralAiControl
 import app.lawnchair.ui.preferences.navigation.GeneralIconPack
 import app.lawnchair.ui.preferences.navigation.GeneralIconShape
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
+import kotlinx.coroutines.launch
 
 @Composable
 fun GeneralPreferences() {
     val context = LocalContext.current
     val prefs = preferenceManager()
     val prefs2 = preferenceManager2()
+    val scope = rememberCoroutineScope()
     val iconPacks by LocalPreferenceInteractor.current.iconPacks.collectAsStateWithLifecycle()
     val themedIconsAdapter = prefs.themedIcons.getAdapter()
     val drawerThemedIconsAdapter = prefs.drawerThemedIcons.getAdapter()
@@ -95,6 +103,14 @@ fun GeneralPreferences() {
                 label = stringResource(id = R.string.home_screen_rotation_label),
                 description = stringResource(id = R.string.home_screen_rotation_description),
             )
+            // Moved out of the former "Experimental features" screen.
+            SwitchPreference(
+                adapter = prefs2.enableFontSelection.getAdapter(),
+                label = stringResource(id = R.string.font_picker_label),
+                description = stringResource(id = R.string.font_picker_description),
+            )
+            // Launcher language picker, moved here from the Home screen page.
+            AppLanguagePreference()
         }
         ExpandAndShrink(visible = prefs2.enableFontSelection.asState().value) {
             PreferenceGroup(heading = stringResource(id = R.string.font_label)) {
@@ -157,6 +173,13 @@ fun GeneralPreferences() {
                 label = stringResource(id = R.string.shadow_bg_icons_label),
             )
 
+            // Moved out of the former "Experimental features" screen.
+            SwitchPreference(
+                adapter = prefs2.alwaysReloadIcons.getAdapter(),
+                label = stringResource(id = R.string.always_reload_icons_label),
+                description = stringResource(id = R.string.always_reload_icons_description),
+            )
+
             ExpandAndShrink(visible = wrapAdaptiveIcons.state.value) {
                 SliderPreference(
                     label = stringResource(id = R.string.background_lightness_label),
@@ -200,6 +223,43 @@ fun GeneralPreferences() {
                         )
                     }
                 }
+            }
+        }
+
+        // Mod port: entry into the nine AI access channel switches (broadcast / activity /
+        // service / provider / deep link / batch / HTTP / MCP / shortcuts). The sub-screen
+        // writes them straight to the launcher3 prefs file the ported AdbControl* executor reads.
+        PreferenceGroup {
+            NavigationActionPreference(
+                label = stringResource(id = R.string.ai_control_category_title),
+                destination = GeneralAiControl,
+                subtitle = stringResource(id = R.string.ai_control_category_summary),
+            )
+        }
+
+        PreferenceGroup(
+            heading = stringResource(id = R.string.log_collection_category),
+            description = stringResource(id = R.string.log_collection_category_description),
+        ) {
+            SwitchPreference(
+                adapter = prefs2.logCollectionEnabled.getAdapter(),
+                label = stringResource(id = R.string.enable_log_collection_label),
+                description = stringResource(id = R.string.enable_log_collection_description),
+            )
+            ClickablePreference(
+                label = stringResource(id = R.string.export_logs_label),
+                subtitle = stringResource(id = R.string.export_logs_description),
+            ) {
+                LogExporter.exportAndShare(context)
+            }
+        }
+
+        PreferenceGroup {
+            ClickablePreference(
+                label = stringResource(id = R.string.reset_category_label),
+                confirmationText = stringResource(id = R.string.reset_category_confirmation),
+            ) {
+                scope.launch { ResetPreferences.resetCategory(context, SettingsCategory.General) }
             }
         }
     }

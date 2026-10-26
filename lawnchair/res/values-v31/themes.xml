@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Kill the Android 12+ system splash screen (开屏画面) on the settings activity: no icon
+         and a background matching the settings surface, so the branded splash is not visible. -->
+    <style name="Theme.Lawnchair.Settings" parent="Theme.Lawnchair">
+        <item name="android:windowSplashScreenAnimatedIcon">@null</item>
+        <item name="android:windowSplashScreenBackground">?android:attr/colorBackground</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@null</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+    </style>
+</resources>

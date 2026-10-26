@@ -36,6 +36,7 @@ import app.lawnchair.hotseat.HotseatMode
 import app.lawnchair.icons.CustomAdaptiveIconDrawable
 import app.lawnchair.icons.shape.IconShape
 import app.lawnchair.icons.shape.IconShapeManager
+import app.lawnchair.log.LogCollector
 import app.lawnchair.preferences.PreferenceManager as LawnchairPreferenceManager
 import app.lawnchair.qsb.providers.QsbSearchProvider
 import app.lawnchair.search.algorithms.LawnchairSearchAlgorithm
@@ -298,9 +299,47 @@ class PreferenceManager2 private constructor(private val context: Context) :
         defaultValue = context.resources.getBoolean(R.bool.config_default_show_top_shadow),
     )
 
+    // No-drawer mode: instead of an app drawer, every app is
+    // flattened onto the workspace by AllAppsToWorkspace. Exposed in App drawer settings as an
+    // inverted "Enable app drawer" switch that defaults to off (no drawer). Toggling recreates the
+    // launcher so LawnchairLauncher.bindComplete re-runs the (idempotent) flatten pass.
+    val noDrawer = preference(
+        key = booleanPreferencesKey(name = "no_drawer"),
+        defaultValue = true,
+        onSet = { reloadHelper.recreate() },
+    )
+
+    // Component keys hidden from the home screen in no-drawer mode. AllAppsToWorkspace skips these
+    // when flattening and strips any already-placed copies, and toggling an entry recreates the
+    // launcher so the pass re-runs immediately.
+    val hiddenHomeApps = preference(
+        key = stringSetPreferencesKey(name = "hidden_home_apps"),
+        defaultValue = setOf(),
+        onSet = { reloadHelper.recreate() },
+    )
+
     val lockHomeScreen = preference(
         key = booleanPreferencesKey(name = "lock_home_screen"),
         defaultValue = context.resources.getBoolean(R.bool.config_default_lock_home_screen),
+    )
+
+    // Classic drag mode: when enabled (default) dragging a home icon does not enter the
+    // spring-loaded state (no workspace zoom) and does not show the top Cancel/Uninstall bar.
+    // Page switching is done by hovering the dragged icon near the left/right screen edge. When
+    // disabled, the original spring-loaded drag with the top bar is restored. Read on every drag
+    // start/over, so no reload is required on change.
+    val classicDragMode = preference(
+        key = booleanPreferencesKey(name = "classic_drag_mode"),
+        defaultValue = true,
+    )
+
+    // Edge trigger range for classic drag paging: the fraction of the screen width, measured from
+    // each edge, a hovered dragged icon must reach into before the neighbor page snap arms.
+    // Exposed as a percentage slider under the classic drag switch. Read on every drag hover,
+    // so no reload is required on change.
+    val classicDragEdgeFraction = preference(
+        key = floatPreferencesKey(name = "classic_drag_edge_fraction"),
+        defaultValue = 0.15f,
     )
 
     val legacyPopupOptionsMigrated = preference(
@@ -312,6 +351,21 @@ class PreferenceManager2 private constructor(private val context: Context) :
         key = stringPreferencesKey(name = "launcher_popup_order"),
         defaultValue = LauncherOptionsPopup.DEFAULT_ORDER.toOptionOrderString(),
         onSet = { reloadHelper.reloadGrid() },
+    )
+
+    // Which rows the app icon long-press menu shows and in which order. Empty means the shipped
+    // menu; IconMenuPopup reads this on every long press, so no reload is required on change.
+    val iconMenuOrder = preference(
+        key = stringPreferencesKey(name = "icon_menu_order"),
+        defaultValue = "",
+    )
+
+    // Per-app interface language. A BCP 47 tag handed to
+    // LocaleManager.setApplicationLocales; empty means "follow the system language". The choice is
+    // applied in AppLanguage when the user picks it, so no reload is wired here.
+    val appLanguage = preference(
+        key = stringPreferencesKey(name = "app_language"),
+        defaultValue = "",
     )
 
     val lockHomeScreenButtonOnPopUp = preference(
@@ -375,6 +429,12 @@ class PreferenceManager2 private constructor(private val context: Context) :
                 LawnchairPreferenceManager.getInstance(context).fontWorkspace.set(newValue = fontCache.uiText)
             }
         },
+    )
+
+    val logCollectionEnabled = preference(
+        key = booleanPreferencesKey(name = "log_collection_enabled"),
+        defaultValue = false,
+        onSet = { enabled -> LogCollector.setEnabled(context, enabled) },
     )
 
     val enableSmartspaceCalendarSelection = preference(
@@ -679,17 +739,6 @@ class PreferenceManager2 private constructor(private val context: Context) :
         onSet = { reloadHelper.recreate() },
     )
 
-    val deckLayout = preference(
-        key = booleanPreferencesKey(name = "enable_lawn_deck"),
-        defaultValue = false,
-        onSet = { reloadHelper.reloadIcons() },
-    )
-
-    val showDeckLayout = preference(
-        key = booleanPreferencesKey(name = "show_deck_layout"),
-        defaultValue = false,
-    )
-
     val enableLabelInDock = preference(
         key = booleanPreferencesKey(name = "enable_label_dock"),
         defaultValue = false,
@@ -771,6 +820,27 @@ class PreferenceManager2 private constructor(private val context: Context) :
                 runCatching { kotlinxJson.decodeFromString<GestureHandlerConfig>(it) }
                     .getOrDefault(GestureHandlerConfig.NoOp)
             } ?: GestureHandlerConfig.NoOp
+        }
+    }
+
+    // Removes the given preference keys from the DataStore so each opto preference falls back to
+    // its declared default on the next read. Matching is by key name only, so the value type of a
+    // key does not have to be known here. Used by the per-section settings reset.
+    suspend fun removeKeys(names: Collection<String>) {
+        if (names.isEmpty()) return
+        preferencesDataStore.edit { prefs ->
+            prefs.asMap().keys.filter { it.name in names }.forEach { prefs.remove(it) }
+        }
+    }
+
+    // Clears every stored preference except the ones in [keep] and the per-app gesture handlers
+    // (whose keys contain ':'). This restores all settings to defaults while preserving user data
+    // such as hidden apps and per-app overrides. Used by the global settings reset.
+    suspend fun removeAllKeysExcept(keep: Set<String>) {
+        preferencesDataStore.edit { prefs ->
+            prefs.asMap().keys
+                .filter { it.name !in keep && ':' !in it.name }
+                .forEach { prefs.remove(it) }
         }
     }
 

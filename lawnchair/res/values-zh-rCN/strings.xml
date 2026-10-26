@@ -49,7 +49,7 @@
     <string name="pro_updated">你已经是最新版！</string>
     <!-- Changes dialog strings -->
     <string name="changes_dialog_title">更新</string>
-    <string name="changes_dialog_error">Failed to load changes</string>
+    <string name="changes_dialog_error">加载更改内容失败</string>
     <string name="changes_dialog_no_changes">没有发现更改</string>
     <string name="changes_dialog_build_format">Build #%1$d → #%2$d</string>
     <string name="changes_dialog_commit_info">by %1$s • %2$s • %3$s</string>
@@ -91,7 +91,7 @@
     <string name="wallpaper">壁纸</string>
     <string name="style">样式</string>
     <string name="background_opacity">背景不透明度</string>
-    <string name="pref_all_apps_search_bar_background">Separated Search bar background</string>
+    <string name="pref_all_apps_search_bar_background">独立搜索栏背景</string>
     <!-- Toast text and tips -->
     <string name="copied_toast">已复制到剪贴板</string>
     <string name="calculator_search_result_copied_toast">内容已经复制到粘贴板</string>
@@ -102,8 +102,8 @@
     <string name="caddy_beta">糖果 (测试版)</string>
     <string name="caddy">糖果</string>
     <string name="app_drawer_folder">应用抽屉文件夹</string>
-    <string name="selected_apps">Selected apps</string>
-    <string name="add_apps">Add apps</string>
+    <string name="selected_apps">已选应用</string>
+    <string name="add_apps">添加应用</string>
     <string name="app_drawer_folder_settings">抽屉文件夹</string>
     <string name="add_folder">新建文件夹</string>
     <string name="edit_folder">编辑文件夹</string>
@@ -117,16 +117,20 @@
     <string name="folders_filter_duplicates">仅显示唯一应用</string>
     <string name="my_folder_label">我的文件夹</string>
     <!-- A11y description -->
-    <string name="accessibility_service_description">为了在您执行手势时进行某些操作（例如锁定手机），Lawnchair 需要获取无障碍服务权限。\n\nLawnchair 不会监视您的任何用户操作，尽管所有无障碍服务都必须申请该权限。Lawnchair 会丢弃系统发送的任何事件。\n\n为了锁定您的手机或打开最近任务界面，Lawnchair 使用 performGlobalAction 无障碍服务。</string>
+    <string name="accessibility_service_description">为了在您执行手势时进行某些操作（例如锁定手机），Lawnchair 需要获取无障碍服务权限。
+
+Lawnchair 不会监视您的任何用户操作，尽管所有无障碍服务都必须申请该权限。Lawnchair 会丢弃系统发送的任何事件。
+
+为了锁定您的手机或打开最近任务界面，Lawnchair 使用 performGlobalAction 无障碍服务。</string>
     <string name="x_with_y_count">%1$s (%2$d)</string>
     <string name="x_by_y">%1$d x %2$d</string>
     <string name="x_and_y">%1$s &amp; %2$s</string>
     <string name="advanced">高级</string>
     <!-- Draggable -->
-    <string name="reorderable_active_items">Active items</string>
-    <string name="reorderable_disabled_items">Other items</string>
-    <string name="reorderable_disabled_hint">Disabled items will appear here. Drag an item here or tap the remove button to make an item active.</string>
-    <string name="reorderable_add_hint_items">Active items will appear here. Drag an item here or tap the add button to make an item active.</string>
+    <string name="reorderable_active_items">已启用的项目</string>
+    <string name="reorderable_disabled_items">其他项目</string>
+    <string name="reorderable_disabled_hint">已禁用的项目会显示在此处。将项目拖到此处，或点按移除按钮，即可将其启用。</string>
+    <string name="reorderable_add_hint_items">已启用的项目会显示在此处。将项目拖到此处，或点按添加按钮，即可将其启用。</string>
     <!--
 
     Preference Dashboard
@@ -135,9 +139,19 @@
     <string name="settings">设置</string>
     <string name="general_label">通用</string>
     <string name="general_description">颜色、图标包与通知圆点</string>
+    <!-- Log collection & export -->
+    <string name="log_collection_category">日志</string>
+    <string name="log_collection_category_description">收集详细的运行日志以协助排查问题</string>
+    <string name="enable_log_collection_label">开启日志收集</string>
+    <string name="enable_log_collection_description">持续将完整的系统日志、启动器事件与崩溃记录写入设备存储，直至关闭</string>
+    <string name="export_logs_label">导出日志</string>
+    <string name="export_logs_description">将设备信息、近期日志历史与崩溃记录打包为文件，保存到下载目录并可供分享</string>
+    <string name="log_export_success">日志已导出到下载目录</string>
+    <string name="log_export_failed">日志导出失败</string>
+    <string name="log_export_no_app">没有可用于分享日志的应用</string>
     <string name="home_screen_label">主屏幕</string>
     <string name="home_screen_description">订阅源、网格、图标</string>
-    <string name="home_screen_actions">Home screen actions</string>
+    <string name="home_screen_actions">主屏幕操作</string>
     <string name="dock_label">Dock 栏</string>
     <string name="dock_description">搜索栏、图标数量</string>
     <string name="app_drawer_label">应用抽屉</string>
@@ -158,7 +172,7 @@
     <string name="workspace_label">Workspace</string>
     <string name="smartspace_label">Smartspace</string>
     <string name="internal_label">Internal</string>
-    <string name="internal_description">Internal may be more unstable than other experimental group</string>
+    <string name="internal_description">内部功能可能比其他实验性功能更不稳定</string>
     <string name="font_picker_label">自定义字体</string>
     <string name="font_picker_description">部分文字保持不变</string>
     <string name="smartspace_calendar_label">自定义资讯一览日历</string>
@@ -167,16 +181,21 @@
     <string name="workspace_increase_max_grid_size_description">将主屏幕网格大小限制从 10 × 10 提升到 20 × 20</string>
     <string name="always_reload_icons_label">始终重载图标</string>
     <string name="always_reload_icons_description">避免使用图标包中的缓存图标</string>
-    <string name="always_reload_icons_warning">Will cause icon to reload regularly, this is not required if icon pack doesn\'t update regularly</string>
+    <string name="always_reload_icons_warning">会导致图标定期重新加载；如果图标包不会频繁更新，则无需开启此项</string>
     <string name="icon_swipe_gestures">图标滑动手势</string>
     <string name="icon_swipe_gestures_description">左滑或右滑图标以执行操作，而非移动主屏幕</string>
-    <string name="show_deck_layout">Deck layout</string>
-    <string name="show_deck_layout_description">Show a layout option to hide the app drawer and automatically add new apps to the home screen</string>
+    <string name="classic_drag_mode_label">经典拖拽模式</string>
+    <string name="classic_drag_mode_description">拖动应用时不缩放、不显示顶部栏，拖到屏幕边缘可翻页；移除应用请使用长按菜单。</string>
+    <string name="classic_drag_edge_label">边缘触发范围</string>
+    <string name="reset_category_label">恢复本类设置为默认</string>
+    <string name="reset_category_confirmation">将把本分类的设置恢复为默认并重启桌面。桌面布局、隐藏应用、图标包与每应用覆盖将被保留。是否继续？</string>
+    <string name="reset_all_label">恢复所有设置为默认</string>
+    <string name="reset_all_confirmation">将把所有设置恢复为默认并重启桌面。桌面布局、隐藏应用、图标包与每应用覆盖将被保留。是否继续？</string>
     <string name="material_expressive_label">Material 3 Expressive</string>
-    <string name="material_expressive_description">Enable Material 3 Expressive changes in workspace</string>
+    <string name="material_expressive_description">在工作区中启用 Material 3 Expressive 相关改动</string>
     <string name="gesturenavcontract_label">GestureNavContract API</string>
-    <string name="gesturenavcontract_description">Render launcher animations without root, does not work with heavily modified AOSP</string>
-    <string name="gesturenavcontract_warning_incompatibility">GestureNavContract may cause artifacting during animations</string>
+    <string name="gesturenavcontract_description">在使用手势导航时支持 Android 的增强动画。并非所有设备都支持，使用时可能导致动画异常。</string>
+    <string name="gesturenavcontract_warning_incompatibility">GestureNavContract 可能导致动画出现画面瑕疵</string>
     <string name="recents_lock_unlock">锁定/解锁</string>
     <string name="recents_lock_unlock_description">按“全部清除”时防止所选应用关闭</string>
     <!--Overlay-->
@@ -219,8 +238,8 @@
     <string name="adaptive_icon_background_description">使用 100% 背景亮度为白色</string>
     <string name="reset_custom_icons">重置自定义图标</string>
     <string name="reset_custom_icons_confirmation">所有自定义图标将被重置。您想要继续吗？</string>
-    <string name="remove_all_views_from_home_screen">Clear home screen</string>
-    <string name="remove_all_views_from_home_screen_desc">Home screen will be cleared. Do you want to continue?</string>
+    <string name="remove_all_views_from_home_screen">清除主屏幕</string>
+    <string name="remove_all_views_from_home_screen_desc">主屏幕将被清除。是否继续？</string>
     <!-- Icon picker -->
     <string name="icon_picker_default_category">图标</string>
     <string name="icon_picker_reset_to_default">重置为默认</string>
@@ -243,10 +262,10 @@
     <string name="icon_shape_squircle">大圆角</string>
     <string name="icon_shape_teardrop">泪珠形</string>
     <!-- Icon shapes (Material 3 Expressive) -->
-    <string name="icon_shape_very_sunny">Very sunny</string>
-    <string name="icon_shape_complex_clover">Complex clover</string>
-    <string name="icon_shape_four_sided_cookie">Four-sided cookie</string>
-    <string name="icon_shape_seven_sided_cookie">Seven-sided cookie</string>
+    <string name="icon_shape_very_sunny">暖阳</string>
+    <string name="icon_shape_complex_clover">复杂四叶草</string>
+    <string name="icon_shape_four_sided_cookie">四边曲奇</string>
+    <string name="icon_shape_seven_sided_cookie">七边曲奇</string>
     <string name="icon_shape_arch">Arch</string>
     <!-- Custom icon shapes -->
     <string name="custom_icon_shape">自定义图标形状</string>
@@ -279,7 +298,7 @@
     <string name="pref_fonts_add_fonts">添加字体</string>
     <string name="pref_fonts_add_fonts_summary">支持 OTF 和 TTF 格式字体</string>
     <string name="pref_fonts_missing_font">未找到字体</string>
-    <string name="font_label">字体 (实验性功能)</string>
+    <string name="font_label">字体</string>
     <string name="fontWorkspace">通用</string>
     <string name="fontHeading">标题</string>
     <string name="fontHeadingMedium">标题(中)</string>
@@ -342,8 +361,8 @@
     <string name="smartspace_calendar_lunar">Lunar</string>
     <string name="generic_smartspace_concatenated_desc">%1$s, %2$s</string>
     <!-- Battery labels -->
-    <string name="smartspace_battery_fast_charging">Fast charging</string>
-    <string name="smartspace_battery_slow_charging">Slow charging</string>
+    <string name="smartspace_battery_fast_charging">快速充电</string>
+    <string name="smartspace_battery_slow_charging">慢速充电</string>
     <string name="smartspace_battery_charging">正在充电</string>
     <string name="smartspace_battery_full">已充满</string>
     <string name="smartspace_battery_low">电量低</string>
@@ -400,10 +419,10 @@
     <string name="news">新闻</string>
     <string name="legal">Legal</string>
     <string name="acknowledgements">鸣谢</string>
-    <string name="privacy_policy">Privacy policy</string>
+    <string name="privacy_policy">隐私政策</string>
     <string name="contributor_status_active">Active</string>
-    <string name="update_check_failed">Failed to check for updates</string>
-    <string name="major_update_label">Breaking change!</string>
+    <string name="update_check_failed">检查更新失败</string>
+    <string name="major_update_label">重大变更！</string>
     <string name="major_update_description">You are about to update from Lawnchair <xliff:g example="15" id="current_major_version">%1$s</xliff:g> to Lawnchair <xliff:g example="16" id="next_major_version">%2$s</xliff:g>, please consider carefully as newer major version may be unstable than current version.</string>
     <!--
 
@@ -437,7 +456,7 @@
     <string name="gesture_handler_sleep">息屏</string>
     <string name="gesture_handler_recents">打开最近任务界面</string>
     <string name="gesture_handler_open_notifications">打开通知面板</string>
-    <string name="gesture_handler_open_quick_settings">Open Quick Settings</string>
+    <string name="gesture_handler_open_quick_settings">打开快速设置</string>
     <string name="gesture_handler_open_app_option">打开应用</string>
     <string name="gesture_handler_open_app_config">打开 %1$s</string>
     <string name="gesture_handler_open_app_drawer">打开应用抽屉</string>
@@ -447,12 +466,12 @@
     <string name="pick_app_for_gesture">选择应用</string>
     <string name="dt2s_admin_hint_title">需要管理员权限</string>
     <string name="dt2s_admin_hint">To put the device to sleep, set Lawnchair as a device admin app. Tap \"Open settings\", then tap \"Activate this device admin app.\"</string>
-    <string name="dt2s_admin_warning">Gestures to put the device to sleep will be turned off.</string>
+    <string name="dt2s_admin_warning">双击休眠功能将被关闭。</string>
     <string name="d2ts_recents_a11y_hint_title">打开无障碍服务</string>
-    <string name="sleep_a11y_hint">put the device to sleep</string>
-    <string name="notifications_fallback_a11y_hint">open the notification panel</string>
-    <string name="quick_settings_a11y_hint">open the Quick Settings panel</string>
-    <string name="recents_screen_a11y_hint">open the Recents screen</string>
+    <string name="sleep_a11y_hint">让设备进入睡眠</string>
+    <string name="notifications_fallback_a11y_hint">打开通知栏</string>
+    <string name="quick_settings_a11y_hint">打开快速设置面板</string>
+    <string name="recents_screen_a11y_hint">打开最近任务界面</string>
     <string name="generic_a11y_hint">To %1$s, turn on the Lawnchair accessibility service. Tap \"Open settings\", select \"Lawnchair\" and turn on \"Use Lawnchair.\"</string>
     <string name="generic_a11y_disclaimer">Lawnchair uses Accessibility\'s `performGlobalAction` method to perform this action. This is a sensitive permission that allows monitoring other apps. However, Lawnchair is not configured for that functionality and receives no events.</string>
     <!--
@@ -477,12 +496,9 @@
     <!-- General and home screen settings -->
     <string name="home_screen_rotation_label">主屏幕旋转</string>
     <string name="home_screen_rotation_description">允许在设备旋转时旋转主屏幕</string>
-    <string name="wallpaper_blur">壁纸模糊 (实验性)</string>
+    <string name="wallpaper_blur">壁纸模糊</string>
     <string name="wallpaper_background_blur">模糊强度</string>
     <string name="wallpaper_background_blur_factor">因素阈值</string>
-    <string name="home_lawn_deck_label">甲板</string>
-    <string name="home_lawn_deck_label_beta">甲板 (测试版)</string>
-    <string name="home_lawn_deck_description">使用 Deck 轻松访问您的应用程序，这是专为简单和无缝组织而设计的终极无抽屉体验</string>
     <string name="auto_add_shortcuts_label">添加新应用到主屏</string>
     <string name="minus_one_enable">显示订阅</string>
     <string name="minus_one_unavailable">未安装订阅源。</string>
@@ -492,8 +508,8 @@
     <string name="wallpaper_depth_effect_label">壁纸缩放特效</string>
     <string name="wallpaper_depth_effect_description">在启动器区域之间过渡时缩放壁纸</string>
     <string name="show_sys_ui_scrim">顶部阴影</string>
-    <string name="infinite_scrolling_label">Infinite scrolling</string>
-    <string name="infinite_scrolling_description">Swipe to loop between the first and last pages</string>
+    <string name="infinite_scrolling_label">无限滚动</string>
+    <string name="infinite_scrolling_description">在首页和末页之间滑动循环</string>
     <string name="home_screen_grid">主屏幕网格</string>
     <string name="home_screen_lock">锁定主屏幕</string>
     <string name="home_screen_unlock">解锁主屏幕</string>
@@ -604,7 +620,7 @@
 
     -->
     <!-- Launcher strings used -->
-    <string name="all_apps_device_search_hint">Search web and more</string>
+    <string name="all_apps_device_search_hint">搜索网页及更多内容</string>
     <string name="all_apps_search_bar_hint">搜索应用</string>
     <string name="all_apps_no_search_results">未找到与“<xliff:g example="Android" id="query">%1$s</xliff:g>”匹配的应用</string>
     <string name="all_apps_search_result_suggestions">来自网络</string>
@@ -637,9 +653,9 @@
     <string name="search_algorithm_app_search">应用搜索</string>
     <string name="search_algorithm_global_search_on_device">全局搜索 (设备上)</string>
     <string name="search_algorithm_global_search_via_asi">全局搜索 (通过 ASI)</string>
-    <string name="custom_search_label">Search engine name</string>
-    <string name="custom_search_url">Search engine URL</string>
-    <string name="custom_search_suggestions_url">Search suggestions URL</string>
+    <string name="custom_search_label">搜索引擎名称</string>
+    <string name="custom_search_url">搜索引擎网址</string>
+    <string name="custom_search_suggestions_url">搜索建议网址</string>
     <string name="custom_search_input_hint">&#37;s 将被替换为搜索内容</string>
     <string name="custom_search_suggestions_hint">&#37;s will be replaced with the search query. Results must be in JSON OpenSearch format.</string>
     <!-- Labels of each search result types -->
@@ -650,17 +666,17 @@
     <string name="search_pref_result_tips_title">Pixel 提示</string>
     <string name="search_pref_result_settings_title">Android 设置</string>
     <string name="search_pref_result_files_title">文件</string>
-    <string name="search_pref_result_visual_media_title">Photos and videos</string>
-    <string name="search_pref_result_audio_media_title">Audio files</string>
-    <string name="search_pref_result_all_files_title">All files</string>
+    <string name="search_pref_result_visual_media_title">照片和视频</string>
+    <string name="search_pref_result_audio_media_title">音频文件</string>
+    <string name="search_pref_result_all_files_title">所有文件</string>
     <string name="search_pref_result_web_title">网络建议</string>
     <string name="search_pref_result_history_title">搜索历史记录</string>
     <string name="all_apps_search_result_calculator">计算器</string>
-    <string name="search_empty_state_title">Start searching</string>
-    <string name="search_empty_state_no_history_subtitle">Find apps, contacts, and more. Your recent searches will appear here.</string>
-    <string name="search_empty_state_history_disabled_subtitle">Find apps, contacts, and more.</string>
+    <string name="search_empty_state_title">开始搜索</string>
+    <string name="search_empty_state_no_history_subtitle">查找应用、联系人等。您最近的搜索将显示在此处。</string>
+    <string name="search_empty_state_history_disabled_subtitle">查找应用、联系人等。</string>
     <!-- Description for each search result type -->
-    <string name="search_pref_files_search_on">Search on</string>
+    <string name="search_pref_files_search_on">搜索来源</string>
     <string name="search_pref_result_files_description">媒体、文件和更多</string>
     <string name="search_pref_result_contacts_description">联系人及更多</string>
     <string name="search_pref_result_web_provider_description">通过 <xliff:g id="web_search_provider">%1$s</xliff:g></string>
@@ -675,21 +691,21 @@
     <!-- Permission management -->
     <string name="missing_notification_access_label">需要通知使用权来读取内容</string>
     <string name="missing_notification_access_desc">要显示通知圆点，请为 <xliff:g id="name" example="My App">%1$s</xliff:g> 开启应用通知</string>
-    <string name="warn_contact_permission_title">Contacts permission needed</string>
+    <string name="warn_contact_permission_title">需要联系人权限</string>
     <string name="warn_contact_permission_content">To search for contacts, grant contacts and phone permissions to <xliff:g id="name" example="My App">%1$s</xliff:g></string>
-    <string name="permissions_music_audio">Music and audio access needed</string>
+    <string name="permissions_music_audio">需要音乐与音频访问权限</string>
     <string name="permissions_music_audio_description">To search your music and other audio files, <xliff:g id="name" example="My App">%1$s</xliff:g> needs permission to access your media library.</string>
     <!-- Photos and videos -->
-    <string name="permissions_photos_videos">Photos and videos access needed</string>
+    <string name="permissions_photos_videos">需要照片与视频访问权限</string>
     <string name="permissions_photos_videos_description">To search your photos and videos, <xliff:g id="name" example="My App">%1$s</xliff:g> needs permission to access your media library.</string>
-    <string name="permissions_photos_videos_full">Access your full media library?</string>
+    <string name="permissions_photos_videos_full">访问您的完整媒体库？</string>
     <string name="permissions_photos_videos_full_description">To search all your photos and videos, <xliff:g id="name" example="My App">%1$s</xliff:g> needs full access to your media library.</string>
-    <string name="permissions_photos_videos_grant_full">Grant full media permissions</string>
-    <string name="permissions_photos_videos_manage_selected">Manage selected items</string>
+    <string name="permissions_photos_videos_grant_full">授予完整媒体权限</string>
+    <string name="permissions_photos_videos_manage_selected">管理已选项目</string>
     <!-- External storage -->
-    <string name="permissions_external_storage">External storage access needed</string>
+    <string name="permissions_external_storage">需要外部存储访问权限</string>
     <string name="permissions_external_storage_description">为了搜索文件，<xliff:g id="name" example="My App">%1$s</xliff:g> 需要拥有访问您设备外部存储的权限。</string>
-    <string name="permissions_manage_storage">Manage storage access needed</string>
+    <string name="permissions_manage_storage">需要存储管理权限</string>
     <string name="permissions_manage_storage_description">为了在搜索结果中显示你的文件，<xliff:g id="name" example="My App">%1$s</xliff:g> 需要拥有管理您设备上所有文件的权限。这一权限只用于列出文件，而不用于读取或更改您的文件。</string>
     <string name="permission_desc_wallpaper_base">为了显示壁纸预览并将其包含于备份中，<xliff:g id="name" example="My App">%1$s</xliff:g> 需要 %2$s 权限。这是由于系统对访问壁纸数据的限制。</string>
     <string name="permission_desc_ending_read_all_files">为了读取设备上所有的文件</string>
@@ -705,5 +721,72 @@
     <string name="permissions_needed">需要权限</string>
     <string name="grant_requested_permissions_tap">点击此处授权</string>
     <!-- Message shown when all home screen views are removed -->
-    <string name="home_screen_all_views_removed_msg">Home screen cleared</string>
-</resources>
+    <string name="home_screen_all_views_removed_msg">主屏幕已清除</string>
+    <string name="show_dot_pagination_label">显示圆点分页</string>
+    <string name="show_dot_pagination_description">用圆点而非线条来显示页码</string>
+    <string name="show_material_u_popup_label">使用新的弹出样式</string>
+    <string name="show_material_u_popup_description">采用 Material You 的回弹、且略微整合的弹出样式</string>
+    <string name="edit_icon_menu_items">编辑图标菜单</string>
+    <string name="icon_menu_editor">图标菜单</string>
+    <string name="icon_menu_editor_description">选择应用长按时显示的菜单条目及其顺序。</string>
+    <string name="icon_menu_items">菜单条目</string>
+    <string name="icon_menu_deep_label">应用快捷方式</string>
+    <string name="language_title">启动器语言</string>
+    <string name="language_system_default">跟随系统语言</string>
+    <string name="no_drawer_title">移除应用抽屉</string>
+    <string name="no_drawer_description">以桌面图标的形式显示所有应用，而不再单独使用应用抽屉。新安装的应用会自动添加到下一个空位。</string>
+    <string name="enable_app_drawer_title">开启应用抽屉</string>
+    <string name="enable_app_drawer_description">在独立的应用抽屉中显示应用。关闭后，所有应用将作为图标显示在主屏幕上，并隐藏下方的设置项。</string>
+    <string name="hide_apps_from_home_screen_label">从主屏幕隐藏应用</string>
+    <string name="hidden_home_apps_label_with_count">隐藏的应用 (%1$d)</string>
+    <string name="folder_add_button_desc">添加应用</string>
+    <string name="folder_add_dialog_title">添加应用</string>
+    <string name="folder_add_ok">确定</string>
+    <string name="folder_add_cancel">取消</string>
+    <string name="folder_add_empty">没有可添加的应用</string>
+    <string name="restore_nova_backup">恢复 Nova 备份</string>
+    <string name="invalid_nova_backup_file">无效的 Nova 备份文件</string>
+    <string name="nova_grid_label">网格</string>
+    <string name="nova_dock_label">停靠栏</string>
+    <string name="nova_app_label">应用</string>
+    <string name="nova_widget_label">微件</string>
+    <string name="nova_folder_label">文件夹</string>
+    <string name="nova_shortcut_label">快捷方式</string>
+    <string name="nova_icon_pack_label">图标包</string>
+    <string name="restore_nova_subgrid_warning">此备份使用了 Nova 的子网格定位。Lawnchair 不支持子网格，因此放在子网格中的项目会被对齐到最近的网格位置。</string>
+    <string name="restore_nova_smartspace_conflict_toggle">额外增加一栏以显示“一瞥”信息</string>
+    <string name="dt2s_recents_warning_open_settings">打开设置</string>
+    <string name="dt2s_a11y_hint">要使用“双击息屏”，请开启 Lawnchair 无障碍服务。点按“打开设置”，选择“Lawnchair”，并开启“使用 Lawnchair”。\n\nLawnchair 通过无障碍的 performGlobalAction 方法来执行该操作。这是一项敏感权限，允许监控其他应用。但 Lawnchair 并未针对该功能进行配置，也不会接收任何事件。</string>
+    <string name="recents_a11y_hint">要使用“打开最近任务”，请开启 Lawnchair 无障碍服务。点按“打开设置”，选择“Lawnchair”，并开启“使用 Lawnchair”。\n\nLawnchair 通过无障碍的 performGlobalAction 方法来执行该操作。这是一项敏感权限，允许监控其他应用。但 Lawnchair 并未针对该功能进行配置，也不会接收任何事件。</string>
+    <string name="adb_shortcut_host_label">启动器控制</string>
+    <string name="adb_sc_list_short">列出图标</string>
+    <string name="adb_sc_list_long">将桌面写入 logcat</string>
+    <string name="adb_sc_reload_short">重新加载桌面</string>
+    <string name="adb_sc_reload_long">从其数据库重新读取桌面</string>
+    <string name="adb_sc_disabled">请在本设置中开启通道 9</string>
+    <string name="ai_control_category_title">AI 访问通道</string>
+    <string name="adb_activity_title">2. 无界面活动（am start）</string>
+    <string name="adb_service_title">3. 短生命周期服务（am start-service）</string>
+    <string name="adb_provider_title">4. 内容提供者（content call）</string>
+    <string name="adb_link_title">5. 深度链接（VIEW intent）</string>
+    <string name="adb_batch_title">6. 结构化行（content insert / bulkInsert）</string>
+    <string name="adb_http_title">7. 本地 HTTP 服务器（REST，127.0.0.1:9091）</string>
+    <string name="adb_mcp_title">8. MCP 服务器（JSON-RPC 2.0，POST /mcp）</string>
+    <string name="adb_shortcut_title">9. 快捷方式（长按“控制”图标）</string>
+    <string name="ai_direct_db_title">完全不改动启动器：直接编辑 launcher.db（root / Shizuku）</string>
+    <string name="ai_cache_freeze_title">待机零耗的由来：缓存应用冻结器</string>
+    <string name="ai_control_category_summary">九种方式让外部工具（一个 AI、一个 MCP 客户端、一个脚本、adb shell）或你本人来操控桌面。空闲时它们全都零成本：前四种在收到调用之前不会创建任何组件，深度链接是一个只在调用期间存在的活动，接下来的两种共享一个仅在其开关打开时才存在的回环线程，最后一种则是在其开关打开之前连图标都不存在。每个通道都理解同样的命令——list_icons、move_icon、add_icon、remove_icon，以及自 v111 起的 reload——并把结果记录到 adb logcat -s AdbControl；HTTP 与 MCP 通道还会把结果回传给调用者。所有开关默认关闭。通道 1 到 4 以及 6 受 DUMP 权限保护，因此只有 adb shell 或 root 能触达它们；深度链接（5）、本地服务器（7 和 8）以及快捷方式（9）则刻意不受保护，因为正是这一点让它们无需 adb 也可使用——请把那些开关当作一种安全取舍。</string>
+    <string name="adb_control_title">1. 静态广播（am broadcast）</string>
+    <string name="adb_control_summary">最轻量的通道，自 v107 起提供。示例：adb shell am broadcast -n com.lawnchair.launcher/com.android.launcher3.AdbControlReceiver --es cmd list_icons。不使用时零开销：接收器对象随每次广播而创建，并紧接其后被丢弃。</string>
+    <string name="adb_activity_summary">通过一个没有用户界面的活动执行同样的命令：adb shell am start -n com.lawnchair.launcher/com.android.launcher3.AdbControlActivity --es cmd list_icons。它使用 Theme.NoDisplay，因此从不绘制任何窗口，命令一完成就自行结束，并且不会进入最近任务。不使用时零开销；每次调用比广播略重，因为会创建一个任务。适合偏好 am start 或需要活动返回结果的调用者。</string>
+    <string name="adb_service_summary">通过一个会自行停止的服务执行同样的命令：adb shell am start-service -n com.lawnchair.launcher/com.android.launcher3.AdbControlService --es cmd list_icons。不使用时零开销。较慢或批处理的任务更适合用它，因为服务不受广播那 10 秒时间窗的限制，而 START_NOT_STICKY 确保之后没有任何东西继续运行。</string>
+    <string name="adb_provider_summary">通过 content://com.lawnchair.launcher.aicontrol 执行同样的命令：adb shell content call --uri content://com.lawnchair.launcher.aicontrol --method list_icons。当你的工具本就使用 content URI 时很方便，而且它会等待命令完成，使调用者能取回一个 Bundle。权衡：与上面三个通道不同，系统会在启动器进程启动时实例化一个提供者，因此存在一个空对象带来的极小固定开销——onCreate() 完全不做任何工作，一切都在需要时才发生。</string>
+    <string name="adb_link_summary">把同样的命令放进一个 URL 来携带，因此调用者既不需要 adb 也不需要 DUMP 权限：adb shell am start -a android.intent.action.VIEW -d “launcher://control?cmd=move_icon&amp;package_name=com.foo&amp;target_cellX=0&amp;target_cellY=1”，手机上的任何应用（Termux、Tasker、网页）都能发送同一个 Uri。不使用时零开销，因为活动只在一次调用运行期间存在。权衡：此开关打开时，设备上的每个应用都可能重排你的桌面，这正是它默认关闭、并且每次调用都会连同发起它的包名一起记录到 adb logcat -s AdbControl 的原因。</string>
+    <string name="adb_batch_summary">与通道 4 使用同一个 authority，但它接收的是行而非方法名，因此多个操作可在一次往返中完成：adb shell content insert --uri content://com.lawnchair.launcher.aicontrol --bind cmd:s:move_icon --bind package_name:s:com.foo --bind target_cellX:i:0 --bind target_cellY:i:1。应用侧的 ContentProviderClient.bulkInsert() 可以一次交出一整个列表；每一行都按给定顺序在启动器主线程上应用，而 bulkInsert() 会返回实际执行的行数。它没有自身开销：不增加组件，该开关只是控制这两个写入方法。</string>
+    <string name="adb_http_summary">面向完全没有 adb 的调用者：启动器在 127.0.0.1:9091 上提供纯文本，因此 Termux、Tasker 或其他应用可以请求 http://127.0.0.1:9091/cmd?cmd=move_icon&amp;package_name=com.foo&amp;target_cellX=0&amp;target_cellY=1，并从同一应答中读取结果——GET /list、GET /state?pkg=com.foo、GET /cmd?.. 以及 GET /help。从电脑端使用 adb forward tcp:9091 tcp:9091。与上面的通道不同，结果是在应答本身中返回给调用者，而不只是留在 adb logcat 里，而这正是一个 AI 所需要的。启用时的空闲成本是一个等待连接的线程，没有轮询；禁用时则完全不绑定任何东西。只服务于回环地址，因此网络上无法访问到任何东西。拨动开关会立即启动或停止它，重启后再次打开此屏幕即可让它恢复。</string>
+    <string name="adb_mcp_summary">同一个监听器，改用 AI 客户端已经会说的同一种方言：向 http://127.0.0.1:9091/mcp 以 POST 发送 initialize、tools/list 和 tools/call。工作区命令作为带参数的工具提供，自 v111 起还包括无需参数的 reload，每次调用返回一段文本加上一个 isError 标志。没有会话状态、没有采样、也没有资源，因为一个调用工具的客户端不需要更多东西——因此它在通道 7 之上不增加任何线程或成本。把 Claude Desktop 或任意 MCP SDK 指向被转发的端口，或在设备上的桥接中指向 http://127.0.0.1:9091/mcp。</string>
+    <string name="adb_shortcut_summary">完全不依赖任何调用者的命令：此项开启时，启动器会把两个普通的 Android 快捷方式——list_icons 和 reload——发布为一个“启动器控制”图标（组件名为 LauncherControl）的长按条目，你可以把它放在桌面的任意位置，点按该图标会打开这些设置。这是某个自动化流程或语音助手无需 adb、无需权限、无需端口就能触发的通道，并且关闭时零成本——它所属的图标在那时是一个被禁用的组件，因此包管理器甚至不知道它存在。打开开关会把该图标加入应用列表，关闭则再次移除。只有这两个无需参数的命令以这种方式提供；move_icon、add_icon 和 remove_icon 需要一个包和一个单元格，所以对它们请使用通道 5 或 7。</string>
+    <string name="ai_direct_db_summary">无需任何开关。有了 root 或 Shizuku，一个工具可以直接更新 favorites 表，例如 adb shell sqlite3 /data/data/com.lawnchair.launcher/databases/launcher.db “UPDATE favorites SET cellX=0, cellY=1 WHERE _id=17”，然后通过任一已启用的通道发送 reload 命令——离你手指最近的是通道 9 的快捷方式——以让启动器重新读取该表。启动器完全不知道这次改动，所以它的运行时成本为零；代价是你需要 root 或 Shizuku，并且屏幕只在 reload 之后才更新。</string>
+    <string name="ai_cache_freeze_summary">无需任何开关，Android 11 及更高版本会自行完成：一旦启动器进入缓存状态，它的进程就会被冻结——完全不占 CPU，只占内存——而一次广播、am start 或 content 调用都会立刻唤醒它。因此，除非你真正使用，否则把上面的通道保持关闭是最省的配置。</string>
+<string name="auto_add_shortcuts_description">自动将新安装的应用图标放置在主屏幕的空位上</string>
+    </resources>

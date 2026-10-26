@@ -6,7 +6,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import app.lawnchair.ui.preferences.data.liveinfo.model.AnnouncementId
 import app.lawnchair.ui.preferences.data.liveinfo.model.LiveInformation
 import app.lawnchair.util.MainThreadInitializedObject
 import com.android.launcher3.R
@@ -35,11 +34,6 @@ class LiveInformationManager private constructor(context: Context) : PreferenceM
         defaultValue = context.resources.getBoolean(R.bool.config_default_live_information_enabled),
     )
 
-    val showAnnouncements = preference(
-        key = booleanPreferencesKey(name = "show_announcements"),
-        defaultValue = context.resources.getBoolean(R.bool.config_default_live_information_show_announcements),
-    )
-
     val liveInformation = preference(
         key = stringPreferencesKey(name = "live_information"),
         defaultValue = LiveInformation(),
@@ -53,18 +47,6 @@ class LiveInformationManager private constructor(context: Context) : PreferenceM
                 LiveInformation.serializer(),
                 liveInformation,
             )
-        },
-    )
-
-    val dismissedAnnouncementIds = preference(
-        key = stringPreferencesKey(name = "dismissed_announcement_ids"),
-        defaultValue = emptySet(),
-        parse = {
-            val withUnknownKeys = Json { ignoreUnknownKeys = true }
-            withUnknownKeys.decodeFromString<Set<AnnouncementId>>(it)
-        },
-        save = {
-            Json.encodeToString(it)
         },
     )
 }

@@ -206,6 +206,11 @@ public class PopupContainerWithArrow<T extends Context & ActivityContext>
                 .map(s -> s.getShortcut(launcher, item, icon))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+        // Which of these rows the user wants, and in which
+        // order, is a setting. applyOrder rewrites the list in place and gates the app provided
+        // shortcuts as one group. An empty setting leaves the shipped menu untouched.
+        deepShortcutCount = app.lawnchair.ui.popup.IconMenuPopup.applyOrder(
+                launcher, systemShortcuts, deepShortcutCount);
         container = (PopupContainerWithArrow) launcher.getLayoutInflater().inflate(
                 R.layout.popup_container, launcher.getDragLayer(), false);
         container.configureForLauncher(launcher, item);
