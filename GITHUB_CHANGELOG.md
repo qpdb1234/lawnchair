@@ -23,7 +23,7 @@ MCP JSON-RPC, and dynamic launcher shortcuts.
 
 ## Icons, folders & apps
 
-- **Icon long-press menu:** customize which rows show and their order, plus a **Force Stop** entry.
+- **Icon long-press menu:** customize which rows show and their order.
 - **Folder upgrades:** an "add apps" editor (global de-duplication / return-to-desktop), a tight-fit
   grid that avoids stray empty cells, and a default folder tint.
 
