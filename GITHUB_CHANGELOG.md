@@ -35,7 +35,9 @@ MCP JSON-RPC, and dynamic launcher shortcuts.
 
 ## Build
 
-- Build variant: `lawnWithQuickstepGithubDebug`.
+- Local / dev builds use the `lawnWithQuickstepGithubDebug` variant; the published release
+  (tag `v15.0.0`) is built as `lawnWithQuickstepGithubRelease`. On this fork the release APK is
+  debug-signed, because no release keystore is configured (build.gradle falls back to `signingConfigs.debug`).
 - The `@hide` Android APIs compile against the checked-in `prebuilts/libs/*.jar`.
 
 Full diff against upstream: https://github.com/LawnchairLauncher/lawnchair/compare/v15.0.0-beta3.0...qpdb1234:lawnchair:lawnchair-enhancements
