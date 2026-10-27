@@ -20,3 +20,6 @@ __pycache__
 .vscode
 .fleet
 lawnWithQuickstep/release
+
+# Scratch commit-message draft; must never enter the git tree
+_cmsg.txt
