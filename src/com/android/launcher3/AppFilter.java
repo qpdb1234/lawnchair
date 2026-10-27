@@ -18,8 +18,10 @@ import app.lawnchair.preferences2.PreferenceManager2;
 public class AppFilter {
 
     private final Set<ComponentName> mFilteredComponents;
+    private final String mHostPackageName;
 
     public AppFilter(Context context) {
+        mHostPackageName = context.getPackageName();
         mFilteredComponents = Arrays.stream(
                 context.getResources().getStringArray(R.array.filtered_components))
                 .map(ComponentName::unflattenFromString)
@@ -27,6 +29,13 @@ public class AppFilter {
     }
 
     public boolean shouldShowApp(ComponentName app) {
+        // Never list the launcher itself. filtered_components only drops the main
+        // launcher activity, but this package also exposes the AI-control shortcut
+        // host alias (a second MAIN/LAUNCHER component), so exclude the whole host
+        // package at the shared chokepoint used by the drawer and every picker.
+        if (mHostPackageName.equals(app.getPackageName())) {
+            return false;
+        }
         return !mFilteredComponents.contains(app);
     }
 }
