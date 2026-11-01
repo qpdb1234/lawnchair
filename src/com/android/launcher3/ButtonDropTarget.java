@@ -239,6 +239,14 @@ public abstract class ButtonDropTarget extends TextView
 
     @Override
     public boolean isDropEnabled() {
+        // Each button is registered with the DragController on its own, so it stays a live drop
+        // target even when the bar that hosts it is hidden. Classic drag mode only hides the bar and
+        // never zooms the workspace out, which leaves these buttons' hit rectangles covering the
+        // top row of icons: without this gate a drop over an icon there is eaten by the invisible
+        // Cancel/Uninstall button instead of creating a folder.
+        if (mDropTargetBar != null && mDropTargetBar.getVisibility() != View.VISIBLE) {
+            return false;
+        }
         return mActive && (mAccessibleDrag ||
                 mActivityContext.getDragController().getDistanceDragged() >= mDragDistanceThreshold);
     }

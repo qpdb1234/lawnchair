@@ -329,8 +329,9 @@ public class DropTargetBar extends FrameLayout
     @Override
     public void onDragStart(DropTarget.DragObject dragObject, DragOptions options) {
         // Classic drag mode keeps the top Cancel/Uninstall bar hidden; removal is done through the
-        // long-press icon menu instead. The bar starts hidden and getDropTargets() returns empty
-        // while hidden, so not showing it here does not affect drop handling.
+        // long-press icon menu instead. The bar starts hidden and stays hidden here, and
+        // ButtonDropTarget#isDropEnabled() refuses drops while this parent is not visible, so the
+        // hidden buttons can no longer swallow a drop meant for an icon underneath them.
         boolean classicDragMode = PreferenceExtensionsKt.firstBlocking(
                 PreferenceManager2.getInstance(getContext()).getClassicDragMode());
         if (classicDragMode) {
