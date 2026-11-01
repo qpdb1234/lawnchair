@@ -744,6 +744,12 @@ Lawnchair 不会监视您的任何用户操作，尽管所有无障碍服务都�
     <string name="folder_add_ok">确定</string>
     <string name="folder_add_cancel">取消</string>
     <string name="folder_add_empty">没有可添加的应用</string>
+    <string name="add_to_folder_label">添加到文件夹</string>
+    <string name="add_to_folder_dialog_title">选择文件夹</string>
+    <string name="add_to_folder_unnamed">未命名文件夹</string>
+    <string name="add_to_folder_empty">主屏幕上没有文件夹</string>
+    <string name="add_to_folder_done">已添加到“%1$s”</string>
+    <string name="add_to_folder_failed">无法将应用添加到文件夹</string>
     <string name="restore_nova_backup">恢复 Nova 备份</string>
     <string name="invalid_nova_backup_file">无效的 Nova 备份文件</string>
     <string name="nova_grid_label">网格</string>

@@ -26,13 +26,15 @@ object IconMenuPopup {
     const val DEEP = "Deep"
 
     /** The ids the settings screen offers. Anything else the launcher adds stays untouched. */
-    private val KNOWN = listOf("AppInfo", "Widgets", "Customize", "PauseApps", "UnInstall", DEEP)
+    private val KNOWN =
+        listOf("AppInfo", "Widgets", "Customize", "AddToFolder", "PauseApps", "UnInstall", DEEP)
 
     /** The order an untouched menu would be shown in, which is what an empty setting means. */
     val DEFAULT_ORDER = listOf(
         LauncherOptionPopupItem("AppInfo", true),
         LauncherOptionPopupItem("Widgets", true),
         LauncherOptionPopupItem("Customize", true),
+        LauncherOptionPopupItem("AddToFolder", true),
         LauncherOptionPopupItem("PauseApps", true),
         LauncherOptionPopupItem("UnInstall", true),
         LauncherOptionPopupItem(DEEP, true),
@@ -42,6 +44,7 @@ object IconMenuPopup {
         "AppInfo" -> LauncherOptionMetadata(R.string.app_info_drop_target_label, R.drawable.ic_info_no_shadow)
         "Widgets" -> LauncherOptionMetadata(R.string.widget_button_text, R.drawable.ic_widget)
         "Customize" -> LauncherOptionMetadata(R.string.action_customize, R.drawable.ic_edit)
+        "AddToFolder" -> LauncherOptionMetadata(R.string.add_to_folder_label, R.drawable.ic_folder)
         "PauseApps" -> LauncherOptionMetadata(R.string.paused_apps_drop_target_label, R.drawable.ic_hourglass_top)
         "UnInstall" -> LauncherOptionMetadata(R.string.uninstall_drop_target_label, R.drawable.ic_uninstall_no_shadow)
         DEEP -> LauncherOptionMetadata(R.string.icon_menu_deep_label, R.drawable.ic_deep_shortcuts)

@@ -814,6 +814,14 @@ In order to lock your phone, or to open the Recents screen, Lawnchair uses the p
     <string name="folder_add_cancel">Cancel</string>
     <string name="folder_add_empty">No apps to add</string>
 
+    <!-- Add to folder shortcut (icon long-press menu) -->
+    <string name="add_to_folder_label">Add to folder</string>
+    <string name="add_to_folder_dialog_title">Choose a folder</string>
+    <string name="add_to_folder_unnamed">Unnamed folder</string>
+    <string name="add_to_folder_empty">No folder on the home screen</string>
+    <string name="add_to_folder_done">Added to “%1$s”</string>
+    <string name="add_to_folder_failed">Couldn’t add the app to the folder</string>
+
     <!-- Quickstep settings -->
     <string name="quickswitch_ignored_warning">These settings will be ignored as Lawnchair isn\'t set as the Recents screen provider</string>
 
