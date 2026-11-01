@@ -171,17 +171,26 @@ public class PackageUpdatedTask implements ModelUpdateTask {
                     if (packages[i].equals(pm.getThemedIconPackPackage().get())) {
                         pm.getThemedIconPackPackage().set("");
                     }
-                    final boolean isThemedIconsAvailable = context.getPackageManager()
-                            .queryIntentActivityOptions(
-                                    new ComponentName(context.getApplicationInfo().packageName,
-                                            context.getApplicationInfo().className),
-                                    null,
-                                    new Intent(context.getResources().getString(R.string.icon_packs_intent_name)),
-                                    PackageManager.GET_RESOLVED_FILTER)
-                            .stream().map(it -> it.activityInfo.packageName)
-                            .noneMatch(it -> packageManagerHelper.isAppInstalled(it, mUser));
-                    if (isThemedIconsAvailable) {
-                        pm.getThemedIcons().set(false);
+                    // Clearing the preference notifies its listeners, and those listeners recreate
+                    // the launcher activity and force a full model reload, so writing it on every
+                    // uninstall made the whole desktop flash twice. Only a user who currently has
+                    // themed icons on can have lost the pack that provides them, so only that case
+                    // needs the (expensive) availability check and the resulting write.
+                    if (pm.getThemedIcons().get()) {
+                        final boolean isThemedIconsAvailable = context.getPackageManager()
+                                .queryIntentActivityOptions(
+                                        new ComponentName(
+                                                context.getApplicationInfo().packageName,
+                                                context.getApplicationInfo().className),
+                                        null,
+                                        new Intent(context.getResources().getString(
+                                                R.string.icon_packs_intent_name)),
+                                        PackageManager.GET_RESOLVED_FILTER)
+                                .stream().map(it -> it.activityInfo.packageName)
+                                .noneMatch(it -> packageManagerHelper.isAppInstalled(it, mUser));
+                        if (isThemedIconsAvailable) {
+                            pm.getThemedIcons().set(false);
+                        }
                     }
                 }
                 // Fall through
