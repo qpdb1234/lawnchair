@@ -24,6 +24,9 @@ MCP JSON-RPC, and dynamic launcher shortcuts.
 ## Icons, folders & apps
 
 - **Icon long-press menu:** customize which rows show and their order.
+- **Add to folder:** a menu row that moves the pressed icon into any folder already living on the
+  home screen — pick one in a single choice dialog and confirm, no dragging needed. Only offered for
+  a loose icon, only while a folder exists, and it follows the menu editor like every other row.
 - **Folder upgrades:** an "add apps" editor (global de-duplication / return-to-desktop), a tight-fit
   grid that avoids stray empty cells, and a default folder tint.
 
@@ -36,8 +39,10 @@ MCP JSON-RPC, and dynamic launcher shortcuts.
 ## Build
 
 - Local / dev builds use the `lawnWithQuickstepGithubDebug` variant; the published release
-  (tag `v15.0.0`) is built as `lawnWithQuickstepGithubRelease`. On this fork the release APK is
+  (tag `v15.0.1`) is built as `lawnWithQuickstepGithubRelease`. On this fork the release APK is
   debug-signed, because no release keystore is configured (build.gradle falls back to `signingConfigs.debug`).
+- The icon menu editor identifies a row by the class name of its `SystemShortcut`, so `proguard.pro`
+  keeps those names through R8 (`-keepnames class * extends com.android.launcher3.popup.SystemShortcut`).
 - The `@hide` Android APIs compile against the checked-in `prebuilts/libs/*.jar`.
 
 Full diff against upstream: https://github.com/LawnchairLauncher/lawnchair/compare/v15.0.0-beta3.0...qpdb1234:lawnchair:lawnchair-enhancements
