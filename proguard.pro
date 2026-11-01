@@ -49,6 +49,11 @@
 }
 
 # Lawnchair specific rules.
+# The icon menu editor identifies every row of the app icon long press menu by the simple name of
+# its SystemShortcut subclass, so those names have to survive minification. The subclasses live in
+# app.lawnchair.ui.popup, which nothing else keeps; the AOSP ones are covered by the com.android.**
+# rule above already. keepnames only stops the renaming and still lets R8 remove an unused class.
+-keepnames class * extends com.android.launcher3.popup.SystemShortcut
 -keep class app.lawnchair.LawnchairProto$* { *; }
 -keep class app.lawnchair.LawnchairApp { *; }
 -keep class app.lawnchair.LawnchairLauncher { *; }
