@@ -2773,7 +2773,12 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
      */
     private void handleClassicEdgePaging(DragObject d) {
         CellLayout neighbor = null;
-        if (!isPageInTransition()) {
+        // Once the drag is committed to creating or joining a folder the page must stay put:
+        // icons in the outermost columns sit inside the edge zone, and paging away at the moment
+        // the finger lifts drops the icon on the wrong page and discards the folder gesture.
+        boolean folderPending = mDragMode == DRAG_MODE_CREATE_FOLDER
+                || mDragMode == DRAG_MODE_ADD_TO_FOLDER;
+        if (!folderPending && !isPageInTransition()) {
             int nextPage = getNextPage();
             CellLayout currentPage = (CellLayout) getChildAt(nextPage);
             if (currentPage != null) {
