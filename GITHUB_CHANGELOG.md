@@ -36,6 +36,25 @@ MCP JSON-RPC, and dynamic launcher shortcuts.
 - Log collection/export, reset settings to defaults, custom icon import, wallpaper blur, and several
   experimental features promoted to stable.
 
+## Fixes in 15.0.1
+
+- **Uninstalling no longer flashes the home screen twice.** An app removal used to clear the themed-icon
+  preference unconditionally, and writing a preference notifies its listeners: the activity got recreated
+  *and* the model force-reloaded behind it. The availability check and the write now only happen while
+  themed icons are actually enabled.
+- **Dropping an icon onto an icon in the first row builds a folder again.** In classic drag mode the top
+  Cancel / Uninstall bar stays hidden, but its buttons were still registered as drop targets and their
+  hit rectangles cover that row, so the drop was swallowed — either an uninstall confirmation popped up or
+  nothing happened at all.
+- **Folder gestures survive edge paging.** Icons in the outermost columns sit inside the paging trigger
+  zone, and hovering there switched the page just as the finger lifted, dropping the icon on the wrong
+  page and discarding the create/add-to-folder gesture. Paging now freezes while a folder is pending.
+- **Folders resize immediately.** Adding or removing an app while the folder is open resizes the panel on
+  the spot, instead of keeping the old size until the folder was closed and reopened.
+- **Dock apps leave the dock when a folder takes them.** The folder "add apps" editor de-duplicated only
+  across the workspace pages, while the dock is a separate cell layout, so an app added from the bar ended
+  up in the folder *and* still sitting in the bar. The same sweep now covers both.
+
 ## Build
 
 - Local / dev builds use the `lawnWithQuickstepGithubDebug` variant; the published release
