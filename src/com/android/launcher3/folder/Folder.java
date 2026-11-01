@@ -1558,6 +1558,15 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
     @Override
     public void onItemsChanged(boolean animate) {
         updateTextViewFocus();
+        // The panel's window size, position and background are only computed by centerAboutIcon(),
+        // which animateOpen() calls once. arrangeChildren() recomputes the grid but leaves those
+        // values stale, so an item added (or removed) while the folder is open used to only change
+        // the folder's size after closing and re-opening it. Re-center while open to resize now.
+        if (mIsOpen && mState != STATE_ANIMATING) {
+            centerAboutIcon();
+            requestLayout();
+            invalidate();
+        }
     }
 
     @Override
