@@ -52,9 +52,9 @@ import java.text.Collator
  *  1. add   - every checked app that is not already a member is appended with [FolderInfo.add],
  *             which the open [Folder] persists through its `onAdd` listener.
  *  2. sync  - the resulting membership (`selComps`) is reconciled against the rest of the launcher:
- *             [removeDesktopDuplicates] deletes loose desktop copies, [removeFolderDuplicates]
+ *             [removeDesktopDuplicates] deletes loose copies of those apps, [removeFolderDuplicates]
  *             deletes copies living inside other folders, and [removeUnchecked] moves members that
- *             were unchecked back onto the current desktop page.
+ *             were unchecked back onto the first free cell of the current desktop page.
  *
  * The mod's file logging / watchdog / background class-preload scaffolding was purely reverse-
  * engineering instrumentation and is intentionally not carried over; the move-unchecked step runs
@@ -136,9 +136,7 @@ object FolderAddDialog {
     private fun collectOtherFolderKeys(launcher: Launcher, self: FolderInfo): HashSet<String> {
         val exclude = HashSet<String>()
         try {
-            val workspace = launcher.workspace
-            for (p in 0 until workspace.childCount) {
-                val page = workspace.getChildAt(p) as? CellLayout ?: continue
+            for (page in looseLayouts(launcher)) {
                 val container = page.shortcutsAndWidgets ?: continue
                 for (i in 0 until container.childCount) {
                     val fi = container.getChildAt(i)?.tag as? FolderInfo ?: continue
@@ -153,6 +151,24 @@ object FolderAddDialog {
             Log.w(TAG, "failed to scan other folders", e)
         }
         return exclude
+    }
+
+    /**
+     * Every CellLayout that can hold a loose icon: the workspace pages and the dock.
+     *
+     * Hotseat is not a child of Workspace — it is a separate CellLayout the activity owns — so a
+     * pages-only scan never sees the icons filed under Favorites.CONTAINER_HOTSEAT. Scanning only
+     * the pages left the dock copy of an app that had just been made a folder member sitting in the
+     * bar, so the same app appeared in the dock and inside the folder at the same time.
+     */
+    private fun looseLayouts(launcher: Launcher): List<CellLayout> {
+        val layouts = ArrayList<CellLayout>()
+        val workspace = launcher.workspace
+        for (p in 0 until workspace.childCount) {
+            (workspace.getChildAt(p) as? CellLayout)?.let { layouts.add(it) }
+        }
+        launcher.hotseat?.let { layouts.add(it) }
+        return layouts
     }
 
     private fun onConfirm(
@@ -215,12 +231,13 @@ object FolderAddDialog {
         }
     }
 
-    /** Delete loose desktop copies of any app that is now a folder member. */
+    /**
+     * Delete the loose copy of any app that is now a member, whether it lies on a page or stands in
+     * the dock. Folder icons are skipped: their tag is a [FolderInfo], not a [WorkspaceItemInfo].
+     */
     private fun removeDesktopDuplicates(launcher: Launcher, selComps: Set<String>) {
-        val workspace = launcher.workspace
         val writer = launcher.modelWriter
-        for (p in 0 until workspace.childCount) {
-            val page = workspace.getChildAt(p) as? CellLayout ?: continue
+        for (page in looseLayouts(launcher)) {
             val container = page.shortcutsAndWidgets ?: continue
             for (i in container.childCount - 1 downTo 0) {
                 try {
@@ -242,10 +259,8 @@ object FolderAddDialog {
 
     /** Delete copies of folder members that live inside other folders (cross-folder dedup). */
     private fun removeFolderDuplicates(launcher: Launcher, folderId: Int, selComps: Set<String>) {
-        val workspace = launcher.workspace
         val writer = launcher.modelWriter
-        for (p in 0 until workspace.childCount) {
-            val page = workspace.getChildAt(p) as? CellLayout ?: continue
+        for (page in looseLayouts(launcher)) {
             val container = page.shortcutsAndWidgets ?: continue
             for (i in 0 until container.childCount) {
                 val fi = container.getChildAt(i)?.tag as? FolderInfo ?: continue
